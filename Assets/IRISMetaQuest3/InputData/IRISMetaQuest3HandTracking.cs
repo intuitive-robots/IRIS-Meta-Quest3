@@ -28,7 +28,7 @@ namespace IRIS.MetaQuest3.HandTracking
         public MetaQuest3Hand rightHand;
     }
 
-    class MetaQuest3HandTracking : MonoBehaviour
+    class IRISMetaQuest3HandTracking : MonoBehaviour
     {
         [SerializeField] private OVRSkeleton leftHand;
         [SerializeField] private OVRSkeleton rightHand;
@@ -36,7 +36,7 @@ namespace IRIS.MetaQuest3.HandTracking
         private Publisher<MetaQuest3HandTrackingData> _handTrackingPublisher;
         private IRISService<string, string> toggleHandTrackingService;
         private Transform localTF;
-        private bool isHandTrackingEnabled = false;
+        private bool isHandTrackingEnabled = true;
         void Start()
         {
             toggleHandTrackingService = new IRISService<string, string>("ToggleHandTracking", (message) =>

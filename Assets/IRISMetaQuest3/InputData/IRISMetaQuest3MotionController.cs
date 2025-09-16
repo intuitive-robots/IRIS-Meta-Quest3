@@ -27,15 +27,14 @@ namespace IRIS.MetaQuest3.MotionController
         public bool Y;
     }
 
-    public class MetaQuest3MotionControllerPublisher : MonoBehaviour
+    public class IRISMetaQuest3MotionController : MonoBehaviour
     {
 
         [SerializeField] private Transform trackingSpace;
         [SerializeField] private Transform rootTrans;
-        private Action updateAction;
         private Publisher<MetaQuest3MotionControllerData> _MotionControllerPublisher;
         private IRISService<string, string> toggleMotionControllerService;
-        private bool isMotionControllerEnabled = false;
+        private bool isMotionControllerEnabled = true;
 
         void Start()
         {
@@ -45,7 +44,10 @@ namespace IRIS.MetaQuest3.MotionController
 
         void Update()
         {
-            updateAction?.Invoke();
+            if (isMotionControllerEnabled)
+            {
+                PublishMotionControllerData();
+            }
         }
 
 
@@ -54,13 +56,11 @@ namespace IRIS.MetaQuest3.MotionController
             if (isMotionControllerEnabled)
             {
                 isMotionControllerEnabled = false;
-                updateAction -= PublishMotionControllerData;
                 Debug.Log("Motion Controller tracking stopped.");
             }
             else
             {
                 isMotionControllerEnabled = true;
-                updateAction += PublishMotionControllerData;
                 Debug.Log("Motion Controller tracking started.");
             }
             return IRISMSG.SUCCESS;
@@ -100,7 +100,6 @@ namespace IRIS.MetaQuest3.MotionController
 
         private void OnDestroy()
         {
-            updateAction -= PublishMotionControllerData;
             toggleMotionControllerService?.Unregister();
         }
     }

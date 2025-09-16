@@ -3893,6 +3893,7 @@ GameObject:
   m_Component:
   - component: {fileID: 732901845}
   - component: {fileID: 732901844}
+  - component: {fileID: 732901846}
   m_Layer: 0
   m_Name: MQ3DataPublisher
   m_TagString: Untagged
@@ -3930,6 +3931,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &732901846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732901843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dc1510213a622e478c2103070169ede, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trackingSpace: {fileID: 660890514}
+  rootTrans: {fileID: 1943617997}
 --- !u!1 &744187260
 GameObject:
   m_ObjectHideFlags: 0
@@ -10041,6 +10056,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 288387705}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1943617997 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8150505001985269035, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
+  m_PrefabInstance: {fileID: 566441041}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1953769646
 GameObject:
   m_ObjectHideFlags: 0
