@@ -59,6 +59,7 @@
     "dotnet.defaultSolution": "IRIS-Meta-Quest3.sln",
     "cSpell.words": [
         "binarizer",
+        "Grabbable",
         "Zxing"
     ]
 }
