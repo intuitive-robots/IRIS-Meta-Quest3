@@ -100,3 +100,8 @@ InitTestScene*.unity*
 
 # Burst Debug Information
 /*_BurstDebugInformation_DoNotShip
+
+/**/[Oo]bj/
+/**/[Oo]bj.meta
+/**/[Bb]in/
+/**/[Bb]in.meta
