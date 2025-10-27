@@ -3157,6 +3157,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5416606952447211905, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1943618005}
+    - targetCorrespondingSourceObject: {fileID: 5416606952447211905, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1943618007}
+    - targetCorrespondingSourceObject: {fileID: 5416606952447211905, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1943618006}
   m_SourcePrefab: {fileID: 100100000, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
 --- !u!114 &566441042 stripped
 MonoBehaviour:
@@ -10372,6 +10378,81 @@ MonoBehaviour:
   isGrabbable: 1
   grabbable: {fileID: 1943617999}
   _ISDK_RayGrabInteraction: {fileID: 986752759}
+--- !u!114 &1943618006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566441043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39931afdf467caf42bf104495a2be635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _qrCodePrefab: {fileID: 9212524285875627578, guid: 5bde9f9c757d3cd49b9baa20a11e2cd6, type: 3}
+  _uiInstance: {fileID: 7039253054993817987, guid: e5273f7f74bd9fc439ba8950a00bac38, type: 3}
+  _mrukInstance: {fileID: 1943618007}
+--- !u!114 &1943618007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566441043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de27d7f2f20024e18898941292d6c164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <SceneLoadedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <RoomCreatedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <RoomUpdatedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <RoomRemovedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  EnableWorldLock: 1
+  TrackingSpaceOffset:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+  SceneSettings:
+    DataSource: 0
+    RoomIndex: -1
+    RoomPrefabs: []
+    SceneJsons: []
+    LoadSceneOnStartup: 1
+    SeatWidth: 0.6
+    SceneJson: 
+    <TrackerConfiguration>k__BackingField:
+      <KeyboardTrackingEnabled>k__BackingField: 0
+      <QRCodeTrackingEnabled>k__BackingField: 1
+    <TrackableAdded>k__BackingField:
+      m_PersistentCalls:
+        m_Calls: []
+    <TrackableRemoved>k__BackingField:
+      m_PersistentCalls:
+        m_Calls: []
+  _immersiveSceneDebuggerPrefab: {fileID: 0}
 --- !u!1 &1953769646
 GameObject:
   m_ObjectHideFlags: 0
