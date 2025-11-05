@@ -34,16 +34,16 @@ namespace IRIS.MetaQuest3.HandTracking
         [SerializeField] private OVRSkeleton rightHand;
         [SerializeField] private SimSceneSpawner sceneSpawner;
         private Publisher<MetaQuest3HandTrackingData> _handTrackingPublisher;
-        private IRISService<string, string> toggleHandTrackingService;
+        // private IRISService<string, string> toggleHandTrackingService;
         private Transform localTF;
-        private bool isHandTrackingEnabled = true;
+        // private bool isHandTrackingEnabled = true;
         void Start()
         {
-            toggleHandTrackingService = new IRISService<string, string>("ToggleHandTracking", (message) =>
-            {
-                ToggleHandTracking(message);
-                return "Hand tracking toggled";
-            });
+            // toggleHandTrackingService = new IRISService<string, string>("ToggleHandTracking", (message) =>
+            // {
+            //     ToggleHandTracking(message);
+            //     return "Hand tracking toggled";
+            // });
             _handTrackingPublisher = new Publisher<MetaQuest3HandTrackingData>("HandTracking");
             // default local tracking space is the world space
             localTF = transform;
@@ -51,10 +51,10 @@ namespace IRIS.MetaQuest3.HandTracking
 
         void Update()
         {
-            if (isHandTrackingEnabled)
-            {
-                PublishHandTrackingData();
-            }
+            // if (isHandTrackingEnabled)
+            // {
+            // }
+            PublishHandTrackingData();
         }
 
         void PublishHandTrackingData()
@@ -71,37 +71,37 @@ namespace IRIS.MetaQuest3.HandTracking
         }
 
 
-        private void ToggleHandTracking(string rootFrameName)
-        {
-            if (isHandTrackingEnabled)
-            {
-                isHandTrackingEnabled = false;
-                Debug.Log("Hand tracking stopped.");
-                return;
-            }
-            UnityMainThreadDispatcher.Instance.Enqueue(
-                () => {
-                    Transform rootTF;
-                    if (rootFrameName == null || rootFrameName == "")
-                    {
-                        rootTF = transform; // use the current transform if no root frame is specified
-                        Debug.LogWarning("No root frame specified, using the current transform as the root frame.");
-                    }
-                    else
-                    {
-                        rootTF = sceneSpawner.GetSceneTransform(rootFrameName);
-                        if (rootTF == null)
-                        {
-                            Debug.LogError("Scene Spawner is not set. Cannot find root frame.");
-                            return;
-                        }
-                    }
-                    localTF = rootTF;
-                    isHandTrackingEnabled = true;
-                    Debug.Log($"Hand tracking started with root frame: {rootFrameName}");
-                }
-            );
-        }
+        // private void ToggleHandTracking(string rootFrameName)
+        // {
+        //     if (isHandTrackingEnabled)
+        //     {
+        //         isHandTrackingEnabled = false;
+        //         Debug.Log("Hand tracking stopped.");
+        //         return;
+        //     }
+        //     UnityMainThreadDispatcher.Instance.Enqueue(
+        //         () => {
+        //             Transform rootTF;
+        //             if (rootFrameName == null || rootFrameName == "")
+        //             {
+        //                 rootTF = transform; // use the current transform if no root frame is specified
+        //                 Debug.LogWarning("No root frame specified, using the current transform as the root frame.");
+        //             }
+        //             else
+        //             {
+        //                 rootTF = sceneSpawner.GetSceneTransform(rootFrameName);
+        //                 if (rootTF == null)
+        //                 {
+        //                     Debug.LogError("Scene Spawner is not set. Cannot find root frame.");
+        //                     return;
+        //                 }
+        //             }
+        //             localTF = rootTF;
+        //             isHandTrackingEnabled = true;
+        //             Debug.Log($"Hand tracking started with root frame: {rootFrameName}");
+        //         }
+        //     );
+        // }
 
 
         private MetaQuest3Hand GetHandData(OVRSkeleton skeleton)
@@ -121,10 +121,10 @@ namespace IRIS.MetaQuest3.HandTracking
         }
 
 
-        void OnDestroy()
-        {
-            toggleHandTrackingService?.Unregister();
-        }
+        // void OnDestroy()
+        // {
+        //     toggleHandTrackingService?.Unregister();
+        // }
 
     }
 }
