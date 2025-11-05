@@ -10,11 +10,14 @@ namespace IRIS.MetaQuest3.MotionController
     [SerializeField]
     public class MetaQuest3MotionControllerHand
     {
-        public List<float> pos;
-        public List<float> rot;
-        public bool index_trigger;
-        public bool hand_trigger;
+        public List<float> pos;          // Position [x, y, z]
+        public List<float> rot;          // Rotation [x, y, z, w]
+        public List<float> vel;          // Linear velocity [vx, vy, vz]
+        public List<float> ang_vel;      // Angular velocity [wx, wy, wz]
+        public bool index_trigger;       // Index trigger (front trigger)
+        public bool hand_trigger;        // Hand trigger (grip)
     }
+
 
      [SerializeField]
     public class MetaQuest3MotionControllerData
@@ -67,15 +70,32 @@ namespace IRIS.MetaQuest3.MotionController
         }
 
 
-        static MetaQuest3MotionControllerHand CreateHandData(OVRInput.Controller controller, Transform trackingSpace, Transform rootTrans)
+        static MetaQuest3MotionControllerHand CreateHandData(
+            OVRInput.Controller controller,
+            Transform trackingSpace,
+            Transform rootTrans)
         {
             MetaQuest3MotionControllerHand hand = new();
+
+            // Get the local controller position relative to the tracking space
             Vector3 pos = trackingSpace.TransformPoint(OVRInput.GetLocalControllerPosition(controller));
             hand.pos = TransformationUtils.Unity2ROS(rootTrans.InverseTransformPoint(pos));
+
+            // Get the local controller rotation relative to the tracking space
             Quaternion rot = trackingSpace.rotation * OVRInput.GetLocalControllerRotation(controller);
             hand.rot = TransformationUtils.Unity2ROS(rot * Quaternion.Inverse(rootTrans.rotation));
+
+            // Get the local linear velocity of the controller
+            Vector3 vel = trackingSpace.TransformVector(OVRInput.GetLocalControllerVelocity(controller));
+            hand.vel = TransformationUtils.Unity2ROS(rootTrans.InverseTransformVector(vel));
+
+            // Get the local angular velocity of the controller
+            Vector3 angVel = trackingSpace.TransformVector(OVRInput.GetLocalControllerAngularVelocity(controller));
+            hand.ang_vel = TransformationUtils.Unity2ROS(rootTrans.InverseTransformVector(angVel));
+
             return hand;
         }
+
 
         void PublishMotionControllerData()
         {
