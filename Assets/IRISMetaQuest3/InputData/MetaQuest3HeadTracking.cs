@@ -18,16 +18,14 @@ namespace IRIS.MetaQuest3.MotionController
 
     public class MetaQuest3HeadTracking : MonoBehaviour
     {
-        [SerializeField] private Transform trackingSpace;
+        [SerializeField] private Transform headAnchor;
         [SerializeField] private Transform rootTrans;
 
         private Publisher<MetaQuest3HeadData> _HeadPublisher;
-        private Transform headAnchor;
 
         void Start()
         {
             _HeadPublisher = new Publisher<MetaQuest3HeadData>("HeadTracking");
-            headAnchor = OVRManager.instance.GetComponent<OVRCameraRig>().centerEyeAnchor;
         }
 
         void Update()

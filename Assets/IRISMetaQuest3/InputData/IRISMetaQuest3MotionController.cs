@@ -37,37 +37,34 @@ namespace IRIS.MetaQuest3.MotionController
         [SerializeField] private Transform rootTrans;
         private Publisher<MetaQuest3MotionControllerData> _MotionControllerPublisher;
         private IRISService<string, string> toggleMotionControllerService;
-        private bool isMotionControllerEnabled = true;
+        // private bool isMotionControllerEnabled = true;
 
         void Start()
         {
             _MotionControllerPublisher = new Publisher<MetaQuest3MotionControllerData>("MotionController");
-            toggleMotionControllerService = new IRISService<string, string>("ToggleMotionController", ToggleMotionController);
+            // toggleMotionControllerService = new IRISService<string, string>("ToggleMotionController", ToggleMotionController);
         }
 
         void Update()
         {
-            if (isMotionControllerEnabled)
-            {
-                PublishMotionControllerData();
-            }
+            PublishMotionControllerData();
         }
 
 
-        string ToggleMotionController(string message)
-        {
-            if (isMotionControllerEnabled)
-            {
-                isMotionControllerEnabled = false;
-                Debug.Log("Motion Controller tracking stopped.");
-            }
-            else
-            {
-                isMotionControllerEnabled = true;
-                Debug.Log("Motion Controller tracking started.");
-            }
-            return IRISMSG.SUCCESS;
-        }
+        // string ToggleMotionController(string message)
+        // {
+        //     if (isMotionControllerEnabled)
+        //     {
+        //         isMotionControllerEnabled = false;
+        //         Debug.Log("Motion Controller tracking stopped.");
+        //     }
+        //     else
+        //     {
+        //         isMotionControllerEnabled = true;
+        //         Debug.Log("Motion Controller tracking started.");
+        //     }
+        //     return IRISMSG.SUCCESS;
+        // }
 
 
         static MetaQuest3MotionControllerHand CreateHandData(
@@ -118,9 +115,9 @@ namespace IRIS.MetaQuest3.MotionController
             _MotionControllerPublisher.Publish(motionControllerInputData);
         }
 
-        private void OnDestroy()
-        {
-            toggleMotionControllerService?.Unregister();
-        }
+        // private void OnDestroy()
+        // {
+        //     toggleMotionControllerService?.Unregister();
+        // }
     }
 }
