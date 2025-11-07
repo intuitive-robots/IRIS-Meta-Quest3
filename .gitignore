@@ -105,3 +105,9 @@ InitTestScene*.unity*
 /**/[Oo]bj.meta
 /**/[Bb]in/
 /**/[Bb]in.meta
+
+# Auto-generated files by building
+/[Aa]ssets/[Rr]esources/PerformanceTestRunInfo.json
+/[Aa]ssets/[Rr]esources/PerformanceTestRunInfo.json.meta
+/[Aa]ssets/[Rr]esources/PerformanceTestRunSettings.json
+/[Aa]ssets/[Rr]esources/PerformanceTestRunSettings.json.meta
