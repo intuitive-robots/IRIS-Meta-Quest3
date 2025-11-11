@@ -111,3 +111,8 @@ InitTestScene*.unity*
 /[Aa]ssets/[Rr]esources/PerformanceTestRunInfo.json.meta
 /[Aa]ssets/[Rr]esources/PerformanceTestRunSettings.json
 /[Aa]ssets/[Rr]esources/PerformanceTestRunSettings.json.meta
+
+# Sample Assets by Unity
+/[Aa]ssets/SampleScenes/
+/[Aa]ssets/Samples/
+/[Aa]ssets/Samples.meta
