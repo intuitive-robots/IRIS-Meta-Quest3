@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: "Assets/Samples/Meta XR Interaction \u200BSDK/78.0.0/Example Scenes/UISetExamples.unity"
-    guid: 07e3686372a704147b219707ee3c6f62
+    path: Assets/Scenes/UISet.unity
+    guid: ea926c3a9aa0da14c8ef08eaa5058318
+  - enabled: 0
+    path: Assets/Scenes/UISetPatterns.unity
+    guid: 72db62033ef0e554891c4c1e3b8ccb3e
+  - enabled: 0
+    path: Packages/com.meta.xr.sdk.interaction/Runtime/Sample/Objects/UISet/Scenes/UISetPatterns.unity
+    guid: 468bb33eac238354ebb936625328dd54
+  - enabled: 0
+    path: Packages/com.meta.xr.sdk.interaction/Runtime/Sample/Objects/UISet/Scenes/UISet.unity
+    guid: 8384287b57c9d56408918cdc2abbab4f
   - enabled: 1
     path: Assets/Scenes/IRISScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
