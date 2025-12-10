@@ -25,6 +25,16 @@ jobs:
           restore-keys: |
             Library-
 
+      - name: Free Disk Space
+        run: |
+          echo "Initial disk space:"
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          echo "Disk space after cleanup:"
+          df -h
+
       - name: Build
         uses: game-ci/unity-builder@v4
         env:
