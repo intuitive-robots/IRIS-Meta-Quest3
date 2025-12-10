@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using System.Linq;
@@ -11,24 +10,67 @@ public class BuildCommand
 
     public static void BuildAndroid()
     {
-        var buildOptions = new BuildPlayerOptions
-        {
-            scenes = GetScenes(),
-            locationPathName = GetBuildPath(),
-            target = BuildTarget.Android,
-            options = BuildOptions.None
-        };
+        string originalPath = "Assets/Oculus/OculusProjectConfig.asset";
+        string tempResourcePath = "Assets/Resources/OculusProjectConfig.asset";
+        bool assetCopied = false;
 
-        var report = BuildPipeline.BuildPlayer(buildOptions);
-
-        if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
+        try
         {
-            Debug.Log($"Build successful - Build written to {buildOptions.locationPathName}");
+            // The Oculus SDK build hooks expect the config asset to be in a Resources folder.
+            // If it's not there, we temporarily copy it for the duration of the build.
+            if (!File.Exists(tempResourcePath))
+            {
+                Debug.Log($"'{tempResourcePath}' not found. Attempting to copy from '{originalPath}'.");
+                if (File.Exists(originalPath))
+                {
+                    // Ensure the 'Assets/Resources' directory exists.
+                    if (!Directory.Exists("Assets/Resources"))
+                    {
+                        Directory.CreateDirectory("Assets/Resources");
+                    }
+
+                    AssetDatabase.CopyAsset(originalPath, tempResourcePath);
+                    assetCopied = true;
+                    AssetDatabase.Refresh(); // Make sure Unity's asset database sees the new file.
+                    Debug.Log("Asset copied successfully.");
+                }
+                else
+                {
+                    Debug.LogError($"The source asset '{originalPath}' was not found. The build cannot proceed.");
+                    EditorApplication.Exit(1);
+                    return;
+                }
+            }
+
+            var buildOptions = new BuildPlayerOptions
+            {
+                scenes = GetScenes(),
+                locationPathName = GetBuildPath(),
+                target = BuildTarget.Android,
+                options = BuildOptions.None
+            };
+
+            var report = BuildPipeline.BuildPlayer(buildOptions);
+
+            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            {
+                Debug.Log($"Build successful - Build written to {buildOptions.locationPathName}");
+            }
+            else
+            {
+                Debug.LogError($"Build failed: {report.summary.result}");
+                EditorApplication.Exit(1);
+            }
         }
-        else
+        finally
         {
-            Debug.LogError($"Build failed: {report.summary.result}");
-            EditorApplication.Exit(1);
+            // If we copied the asset, clean it up to leave the project state unchanged.
+            if (assetCopied)
+            {
+                Debug.Log($"Cleaning up temporary asset '{tempResourcePath}'.");
+                AssetDatabase.DeleteAsset(tempResourcePath);
+                AssetDatabase.Refresh();
+            }
         }
     }
 
