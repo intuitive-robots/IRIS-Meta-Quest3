@@ -113,7 +113,7 @@ namespace IRIS.MetaQuest3.HandTracking
                 MetaQuest3Bone boneData = new MetaQuest3Bone
                 {
                     pos = TransformationUtils.Unity2ROS(localTF.InverseTransformPoint(bone.Transform.position)),
-                    rot = TransformationUtils.Unity2ROS(bone.Transform.rotation * Quaternion.Inverse(localTF.rotation))
+                    rot = TransformationUtils.Unity2ROS(Quaternion.Inverse(localTF.rotation) * bone.Transform.rotation)
                 };
                 handData.bones.Add(boneData);
             }

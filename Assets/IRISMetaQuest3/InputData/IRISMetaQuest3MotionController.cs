@@ -80,7 +80,7 @@ namespace IRIS.MetaQuest3.MotionController
 
             // Get the local controller rotation relative to the tracking space
             Quaternion rot = trackingSpace.rotation * OVRInput.GetLocalControllerRotation(controller);
-            hand.rot = TransformationUtils.Unity2ROS(rot * Quaternion.Inverse(rootTrans.rotation));
+            hand.rot = TransformationUtils.Unity2ROS(Quaternion.Inverse(rootTrans.rotation) * rot);
 
             // Get the local linear velocity of the controller
             Vector3 vel = trackingSpace.TransformVector(OVRInput.GetLocalControllerVelocity(controller));
