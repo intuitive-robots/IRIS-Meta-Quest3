@@ -8,6 +8,7 @@ public class MQ3UIManager : MonoBehaviour
     [SerializeField] private Transform headTransform;
     [SerializeField] private TMP_Text debugText;
     [SerializeField] private TMP_InputField appNameInput;
+    [SerializeField] private GameObject nameChangePopup;
     public UnityEvent onQRTrackingStarted;
     public UnityEvent onQRTrackingStopped;
     public UnityEvent onAlignmentStarted;
