@@ -2,10 +2,11 @@ using UnityEngine;
 using System;
 using TMPro;
 using UnityEngine.Events;
+using IRIS.Node;
+using NUnit.Framework.Internal;
 
-public class MQ3UIManager : MonoBehaviour
+public class MQ3MenuManager : Singleton<MQ3MenuManager>
 {
-    [SerializeField] private Transform headTransform;
     [SerializeField] private TMP_Text debugText;
     [SerializeField] private TMP_InputField appNameInput;
     [SerializeField] private GameObject nameChangePopup;
@@ -23,18 +24,11 @@ public class MQ3UIManager : MonoBehaviour
         onQRTrackingStopped.AddListener(() => debugText.text = "QR Tracking Stopped");
         onAlignmentStarted.AddListener(() => debugText.text = "Alignment Started");
         onAlignmentStopped.AddListener(() => debugText.text = "Alignment Stopped");
-        if(appNameInput != null)
-        {
-            appNameInput.text = "IRIS Meta Quest 3";
-            appNameInput.onValueChanged.AddListener((value) =>
-            {
-                onChangeName?.Invoke(value);
-                debugText.text = "App Name Changed to: " + value;
-            });
-        }
+        updateDisplayName();
 
 
     }
+
     public void QRTrackingToggled(bool isTracking)
     {
         if (isTracking)
@@ -56,6 +50,20 @@ public class MQ3UIManager : MonoBehaviour
         else
         {
             onAlignmentStopped?.Invoke();
+        }
+    }
+
+    private void updateDisplayName()
+    {
+        debugText.text = "updateDisplayName called. ";
+        name = IRISXRNode.Instance.localInfo.name;
+        if(appNameInput != null)
+        {
+            debugText.text = "App Name: " + name;
+            appNameInput.text = name;
+        } else
+        {
+            debugText.text = "App Name Input is null, " + "App Name: " + name;
         }
     }
 }
