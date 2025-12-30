@@ -28,6 +28,8 @@ namespace Oculus.Interaction.Samples
     /// </summary>
     public class ISDKSceneMenuManager : MonoBehaviour
     {
+        public bool blockMenuToggle = false;
+
         /// <summary>
         /// The Parent Object of the Menu
         /// </summary>
@@ -84,6 +86,10 @@ namespace Oculus.Interaction.Samples
 
         public void ToggleMenu()
         {
+            if (blockMenuToggle)
+            {
+                return;
+            }
             if (_menuParent.activeSelf)
             {
                 _hideMenuAudio.Play();

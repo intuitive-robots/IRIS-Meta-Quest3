@@ -1,4 +1,5 @@
 using IRIS.Node;
+using Oculus.Interaction.Samples;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,6 +14,8 @@ namespace IRIS.MetaQuest3.UI
         [SerializeField] private TMP_InputField appNameInput;
         [SerializeField] private Transform headTransform;
         [SerializeField] private GameObject _spawnPoint;
+        [SerializeField] private ISDKSceneMenuManager isdkSceneMenuManager;
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
 
         void Start()
@@ -33,6 +36,7 @@ namespace IRIS.MetaQuest3.UI
 
         public void OpenNameChangePopup(string currentName = null)
         {
+            isdkSceneMenuManager.blockMenuToggle = true;
             currentName ??= IRISXRNode.Instance.localInfo.name;
             
             if (nameChangePopup != null)
@@ -78,6 +82,7 @@ namespace IRIS.MetaQuest3.UI
 
         public void CloseNameChangePopup()
         {
+            isdkSceneMenuManager.blockMenuToggle = false;
             if (nameChangePopup != null)
             {
                 nameChangePopup.SetActive(false);
