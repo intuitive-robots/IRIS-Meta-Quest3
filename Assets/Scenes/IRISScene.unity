@@ -10391,8 +10391,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _qrCodePrefab: {fileID: 9212524285875627578, guid: 5bde9f9c757d3cd49b9baa20a11e2cd6, type: 3}
-  _uiInstance: {fileID: 7039253054993817987, guid: e5273f7f74bd9fc439ba8950a00bac38, type: 3}
-  _mrukInstance: {fileID: 1943618007}
 --- !u!114 &1943618007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10448,10 +10446,36 @@ MonoBehaviour:
       <QRCodeTrackingEnabled>k__BackingField: 1
     <TrackableAdded>k__BackingField:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1943618006}
+          m_TargetAssemblyTypeName: IRIS.MetaQuest3.QRCodeDetection.QRCodeManager,
+            Assembly-CSharp
+          m_MethodName: OnTrackableAdded
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     <TrackableRemoved>k__BackingField:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1943618006}
+          m_TargetAssemblyTypeName: IRIS.MetaQuest3.QRCodeDetection.QRCodeManager,
+            Assembly-CSharp
+          m_MethodName: OnTrackableRemoved
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   _immersiveSceneDebuggerPrefab: {fileID: 0}
 --- !u!1 &1953769646
 GameObject:

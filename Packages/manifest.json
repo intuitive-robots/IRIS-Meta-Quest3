@@ -2,9 +2,9 @@
   "dependencies": {
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.intuitiverobotslab.iris-viz": "https://github.com/intuitive-robots/IRIS-Viz.git?path=Packages/com.intuitiverobotslab.iris-viz",
-    "com.meta.xr.mrutilitykit": "78.0.0",
+    "com.meta.xr.mrutilitykit": "83.0.1",
     "com.meta.xr.sdk.core": "77.0.0",
-    "com.meta.xr.sdk.interaction.ovr": "78.0.0",
+    "com.meta.xr.sdk.interaction.ovr": "83.0.1",
     "com.unity.collab-proxy": "2.8.2",
     "com.unity.ide.visualstudio": "2.0.22",
     "com.unity.inputsystem": "1.11.1",

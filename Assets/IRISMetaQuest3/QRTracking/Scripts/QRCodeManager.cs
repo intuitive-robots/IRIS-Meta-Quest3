@@ -68,7 +68,7 @@ namespace IRIS.MetaQuest3.QRCodeDetection
         {
             if (!s_instance)
             {
-                Debug.LogError($"{nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
+                Debug.LogError($"[QRCodeManager] {nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
                 return;
             }
 
@@ -144,24 +144,9 @@ namespace IRIS.MetaQuest3.QRCodeDetection
             ToggleQRTrackingService = new IRISService<string, string>("ToggleQRTracking", (message) =>
             {
                 return ToggleQRTracking(message);
-            });           
+            });
+            ToggleQRTracking("");           
         }
-
-
-        //
-        // MonoBehaviour messages
-
-        // void OnValidate()
-        // {
-        //     if (!_uiInstance && FindAnyObjectByType<QRCodeSampleUI>() is { } ui && ui.gameObject.scene == gameObject.scene)
-        //     {
-        //         _uiInstance = ui;
-        //     }
-        //     if (!_mrukInstance && FindAnyObjectByType<MRUK>() is { } mruk && mruk.gameObject.scene == gameObject.scene)
-        //     {
-        //         _mrukInstance = mruk;
-        //     }
-        // }
 
         void OnEnable()
         {
@@ -179,6 +164,18 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         void Update()
         {
+            if (!TrackingEnabled)
+            {
+                return;
+            }
+
+            Debug.Log($"[QRCodeManager] Tracked QR Codes Count: {_trackedQRCodes.Count}");
+            // print all keys in _trackedQRCodes
+            foreach (var key in _trackedQRCodes.Keys)
+            {
+                Debug.Log($"[QRCodeManager] Key: {key}");
+            }
+
             if (_trackedQRCodes.ContainsKey("IRIS"))
             {
                 transform.position = _trackedQRCodes["IRIS"].transform.position;
@@ -192,6 +189,8 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         public void OnTrackableAdded(MRUKTrackable trackable)
         {
+            Debug.Log($" {nameof(OnTrackableAdded)} called.");
+
             if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode)
             {
                 return;
