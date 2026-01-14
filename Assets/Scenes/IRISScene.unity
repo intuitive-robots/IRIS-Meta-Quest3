@@ -6170,6 +6170,7 @@ MonoBehaviour:
   requestEyeTrackingPermissionOnStartup: 0
   requestScenePermissionOnStartup: 1
   requestRecordAudioPermissionOnStartup: 0
+  requestPassthroughCameraAccessPermissionOnStartup: 0
   _localDimming: 1
   _trackingOriginType: 1
   usePositionTracking: 1
@@ -10288,6 +10289,7 @@ MonoBehaviour:
   _rigidbody: {fileID: 1943618000}
   _kinematicWhileSelected: 1
   _throwWhenUnselected: 1
+  _forceKinematicDisabled: 0
 --- !u!54 &1943618000
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10406,6 +10408,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _qrCodePrefab: {fileID: 9212524285875627578, guid: 5bde9f9c757d3cd49b9baa20a11e2cd6, type: 3}
+  _mrukInstance: {fileID: 1943618007}
 --- !u!114 &1943618007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10454,6 +10457,7 @@ MonoBehaviour:
     RoomPrefabs: []
     SceneJsons: []
     LoadSceneOnStartup: 1
+    EnableHighFidelityScene: 0
     SeatWidth: 0.6
     SceneJson: 
     <TrackerConfiguration>k__BackingField:
@@ -12599,7 +12603,7 @@ PrefabInstance:
     - target: {fileID: 2091738352897840653, guid: ff19c325f578a2c4d9e784a9358d2d08, type: 3}
       propertyPath: '_monoBehaviours.Array.data[0]'
       value: 
-      objectReference: {fileID: 7689328018778112895}
+      objectReference: {fileID: 0}
     - target: {fileID: 2125957671615884921, guid: ff19c325f578a2c4d9e784a9358d2d08, type: 3}
       propertyPath: _hand
       value: 
@@ -15010,17 +15014,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4ad4f1ddee798f45a20be4efda35c8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7689328018778112895 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8596244716211811157, guid: 46fdef3df9a5a354caf7692f85e5eff2, type: 3}
-  m_PrefabInstance: {fileID: 7689328018778112892}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d2705674196dfc4da9c25fbacda72d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &7896852652453344830

@@ -164,10 +164,10 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         void Update()
         {
-            if (!TrackingEnabled)
-            {
-                return;
-            }
+            // if (!TrackingEnabled)
+            // {
+            //     return;
+            // }
 
             Debug.Log($"[QRCodeManager] Tracked QR Codes Count: {_trackedQRCodes.Count}");
             // print all keys in _trackedQRCodes
@@ -226,7 +226,7 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         private string ToggleQRTracking(string message)
         {
-            TrackingEnabled = !TrackingEnabled;
+            TrackingEnabled = true;
             return $"QR Tracking enabled: {TrackingEnabled}";
         }
 
