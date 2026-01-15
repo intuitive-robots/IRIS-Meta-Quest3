@@ -40,89 +40,7 @@ namespace IRIS.MetaQuest3.QRCodeDetection
         public static bool IsSupported
             => OVRAnchor.TrackerConfiguration.QRCodeTrackingSupported;
 
-        public static bool HasPermissions
-#if UNITY_EDITOR
-            => true;
-#else
-            => UnityEngine.Android.Permission.HasUserAuthorizedPermission(ScenePermission);
-#endif
-
-
-        public static bool TrackingEnabled
-        {
-            get => s_instance && s_instance._mrukInstance && s_instance._mrukInstance.SceneSettings.TrackerConfiguration.QRCodeTrackingEnabled;
-            set
-            {
-                if (!s_instance || !s_instance._mrukInstance)
-                {
-                    return;
-                }
-                var config = s_instance._mrukInstance.SceneSettings.TrackerConfiguration;
-                config.QRCodeTrackingEnabled = value;
-                s_instance._mrukInstance.SceneSettings.TrackerConfiguration = config;
-            }
-        }
-
-
-        public static void RequestRequiredPermissions(Action<bool> onRequestComplete)
-        {
-            if (!s_instance)
-            {
-                Debug.LogError($"[QRCodeManager] {nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
-                return;
-            }
-
-#if UNITY_EDITOR
-            const string kCantRequestMsg =
-                "Cannot request Android permission when using Link or XR Sim. " +
-                "For Link, enable the spatial data permission from the Link app under Settings > Beta > Spatial Data over Meta Quest Link. " +
-                "For XR Sim, no permission is necessary.";
-
-            Debug.LogWarning(kCantRequestMsg);
-
-            onRequestComplete?.Invoke(HasPermissions);
-#else
-            Debug.Log($"Requesting {ScenePermission} ... (currently: {HasPermissions})");
-
-            var callbacks = new UnityEngine.Android.PermissionCallbacks();
-            callbacks.PermissionGranted += perm => Debug.Log($"{perm} granted");
-
-            var msgDenied = $"{ScenePermission} denied. Please press the 'Request Permission' button again.";
-            var msgDeniedPermanently = $"{ScenePermission} permanently denied. To enable:\n" +
-                                       $"    1. Uninstall and reinstall the app, OR\n" +
-                                       $"    2. Manually grant permission in device Settings > Privacy & Safety > App Permissions.";
-
-#if !UNITY_6000_0_OR_NEWER
-            callbacks.PermissionDenied += _ => Debug.LogError(msgDenied);
-            callbacks.PermissionDeniedAndDontAskAgain += _ => Debug.LogError(msgDeniedPermanently);
-#else
-            callbacks.PermissionDenied += perm =>
-            {
-                // ShouldShowRequestPermissionRationale returns false only if
-                // the user selected 'Never ask again' or if the user has never
-                // been asked for the permission (which can't be the case here).
-                Debug.LogError(
-                    UnityEngine.Android.Permission.ShouldShowRequestPermissionRationale(perm)
-                        ? msgDenied
-                        : msgDeniedPermanently);
-            };
-#endif // UNITY_6000_0_OR_NEWER
-
-            if (onRequestComplete is not null)
-            {
-                callbacks.PermissionGranted += _ => onRequestComplete(HasPermissions);
-                callbacks.PermissionDenied += _ => onRequestComplete(HasPermissions);
-#if !UNITY_6000_0_OR_NEWER
-                callbacks.PermissionDeniedAndDontAskAgain += _ => onRequestComplete(HasPermissions);
-#endif // UNITY_6000_0_OR_NEWER
-            }
-
-            UnityEngine.Android.Permission.RequestUserPermission(ScenePermission, callbacks);
-#endif // UNITY_EDITOR
-        }
-
         private Dictionary<string, MRUKTrackable> _trackedQRCodes = new Dictionary<string, MRUKTrackable>();
-        private IRISService<string, string> ToggleQRTrackingService;
 
 
         [SerializeField]
@@ -141,11 +59,6 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         void Start()
         {
-            ToggleQRTrackingService = new IRISService<string, string>("ToggleQRTracking", (message) =>
-            {
-                return ToggleQRTracking(message);
-            });
-            ToggleQRTracking("");           
         }
 
         void OnEnable()
@@ -164,23 +77,6 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         void Update()
         {
-            // if (!TrackingEnabled)
-            // {
-            //     return;
-            // }
-
-            Debug.Log($"[QRCodeManager] Tracked QR Codes Count: {_trackedQRCodes.Count}");
-            // print all keys in _trackedQRCodes
-            foreach (var key in _trackedQRCodes.Keys)
-            {
-                Debug.Log($"[QRCodeManager] Key: {key}");
-            }
-
-            if (_trackedQRCodes.ContainsKey("IRIS"))
-            {
-                transform.position = _trackedQRCodes["IRIS"].transform.position;
-                transform.rotation = _trackedQRCodes["IRIS"].transform.rotation;
-            }
         }
 
 
@@ -224,12 +120,96 @@ namespace IRIS.MetaQuest3.QRCodeDetection
             Destroy(trackable.gameObject);
         }
 
-        private string ToggleQRTracking(string message)
+        public static bool TrackingEnabled
         {
-            TrackingEnabled = true;
+            get => s_instance && s_instance._mrukInstance && s_instance._mrukInstance.SceneSettings.TrackerConfiguration.QRCodeTrackingEnabled;
+            set
+            {
+                if (!s_instance || !s_instance._mrukInstance)
+                {
+                    return;
+                }
+                var config = s_instance._mrukInstance.SceneSettings.TrackerConfiguration;
+                config.QRCodeTrackingEnabled = value;
+                s_instance._mrukInstance.SceneSettings.TrackerConfiguration = config;
+            }
+        }
+
+        public string ToggleQRTracking(string message)
+        {
+            TrackingEnabled = !TrackingEnabled;
+            Debug.Log($"[QRCodeManager] QR Tracking enabled: {TrackingEnabled}");
             return $"QR Tracking enabled: {TrackingEnabled}";
         }
 
+        internal Dictionary<string, MRUKTrackable> GetTrackedQRCodes()
+        {
+            return _trackedQRCodes;
+        }
 
+        public static bool HasPermissions
+#if UNITY_EDITOR
+            => true;
+#else
+            => UnityEngine.Android.Permission.HasUserAuthorizedPermission(ScenePermission);
+#endif
+
+
+//         public static void RequestRequiredPermissions(Action<bool> onRequestComplete)
+//         {
+//             if (!s_instance)
+//             {
+//                 Debug.LogError($"[QRCodeManager] {nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
+//                 return;
+//             }
+
+// #if UNITY_EDITOR
+//             const string kCantRequestMsg =
+//                 "Cannot request Android permission when using Link or XR Sim. " +
+//                 "For Link, enable the spatial data permission from the Link app under Settings > Beta > Spatial Data over Meta Quest Link. " +
+//                 "For XR Sim, no permission is necessary.";
+
+//             Debug.LogWarning(kCantRequestMsg);
+
+//             onRequestComplete?.Invoke(HasPermissions);
+// #else
+//             Debug.Log($"Requesting {ScenePermission} ... (currently: {HasPermissions})");
+
+//             var callbacks = new UnityEngine.Android.PermissionCallbacks();
+//             callbacks.PermissionGranted += perm => Debug.Log($"{perm} granted");
+
+//             var msgDenied = $"{ScenePermission} denied. Please press the 'Request Permission' button again.";
+//             var msgDeniedPermanently = $"{ScenePermission} permanently denied. To enable:\n" +
+//                                        $"    1. Uninstall and reinstall the app, OR\n" +
+//                                        $"    2. Manually grant permission in device Settings > Privacy & Safety > App Permissions.";
+
+// #if !UNITY_6000_0_OR_NEWER
+//             callbacks.PermissionDenied += _ => Debug.LogError(msgDenied);
+//             callbacks.PermissionDeniedAndDontAskAgain += _ => Debug.LogError(msgDeniedPermanently);
+// #else
+//             callbacks.PermissionDenied += perm =>
+//             {
+//                 // ShouldShowRequestPermissionRationale returns false only if
+//                 // the user selected 'Never ask again' or if the user has never
+//                 // been asked for the permission (which can't be the case here).
+//                 Debug.LogError(
+//                     UnityEngine.Android.Permission.ShouldShowRequestPermissionRationale(perm)
+//                         ? msgDenied
+//                         : msgDeniedPermanently);
+//             };
+// #endif // UNITY_6000_0_OR_NEWER
+
+//             if (onRequestComplete is not null)
+//             {
+//                 callbacks.PermissionGranted += _ => onRequestComplete(HasPermissions);
+//                 callbacks.PermissionDenied += _ => onRequestComplete(HasPermissions);
+// #if !UNITY_6000_0_OR_NEWER
+//                 callbacks.PermissionDeniedAndDontAskAgain += _ => onRequestComplete(HasPermissions);
+// #endif // UNITY_6000_0_OR_NEWER
+//             }
+
+//             UnityEngine.Android.Permission.RequestUserPermission(ScenePermission, callbacks);
+// #endif // UNITY_EDITOR
+//         }
     }
 }

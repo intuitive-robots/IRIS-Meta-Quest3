@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
 
@@ -33,6 +34,8 @@ namespace IRIS.MetaQuest3.QRCodeDetection
         LineRenderer _lineRenderer;
         [SerializeField]
         RectTransform _canvasRect;
+        [SerializeField] 
+        GameObject _axes;
         [SerializeField, Tooltip("(in Canvas-local units)")]
         Vector3 _canvasOffset = new(0f, -15f, 0f);
 
@@ -60,12 +63,12 @@ namespace IRIS.MetaQuest3.QRCodeDetection
             {
                 return;
             }
+            UpdateAxesRotation();
 
             UnityEngine.Assertions.Assert.IsTrue(_trackable.PlaneRect.HasValue);
             _box = _trackable.PlaneRect.Value;
 
             UpdateBoundingBox();
-
             if (!_canvasRect)
             {
                 return;
@@ -76,6 +79,29 @@ namespace IRIS.MetaQuest3.QRCodeDetection
                 y: _box.yMin + _canvasOffset.y * _canvasRect.localScale.y,
                 z: _canvasOffset.z * _canvasRect.localScale.z
             );
+        }
+
+        private void UpdateAxesRotation()
+        {
+            // 1. Get the current forward direction
+            Vector3 currentForward = _axes.transform.forward;
+
+            // 2. Project this vector onto the horizontal plane (XZ)
+            // This removes the Y component so the vector is "flat"
+            Vector3 forwardOnPlane = Vector3.ProjectOnPlane(currentForward, Vector3.up);
+
+            // Handle the edge case where the object was looking straight up or down
+            if (forwardOnPlane.sqrMagnitude < 0.0001f)
+            {
+                // If the projected vector is too small, default to some horizontal direction
+                // as rotation around Y axis won't matter in this case
+                Vector3 currentUp = _axes.transform.up;
+                forwardOnPlane = Vector3.ProjectOnPlane(currentUp, Vector3.up);
+            }
+
+            // 3. Create a new rotation
+            // "Look in the direction of forwardOnPlane, but keep the head up (Vector3.up)"
+            _axes.transform.rotation = Quaternion.LookRotation(forwardOnPlane, Vector3.up);
         }
 
         void UpdateBoundingBox()
