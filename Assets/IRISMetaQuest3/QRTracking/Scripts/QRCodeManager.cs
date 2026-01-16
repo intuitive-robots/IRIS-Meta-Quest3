@@ -99,10 +99,10 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
             _trackedQRCodes[trackable.MarkerPayloadString] = trackable;
             Debug.Log($"{nameof(OnTrackableAdded)}: QRCode tracked! Text: {trackable.MarkerPayloadString}");
-            var instance = Instantiate(_qrCodePrefab, trackable.transform);
-            var qrCode = instance.GetComponent<QRCode>();
+            QRCode qrCode = Instantiate(_qrCodePrefab, trackable.transform);
+            // QRCode qrCode = qrCode.GetComponent<QRCode>();
             qrCode.Initialize(trackable);
-            instance.GetComponent<Bounded2DVisualizer>().Initialize(trackable);
+            qrCode.GetComponent<Bounded2DVisualizer>().Initialize(trackable);
 
         }
 
@@ -155,61 +155,61 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 #endif
 
 
-//         public static void RequestRequiredPermissions(Action<bool> onRequestComplete)
-//         {
-//             if (!s_instance)
-//             {
-//                 Debug.LogError($"[QRCodeManager] {nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
-//                 return;
-//             }
+        //         public static void RequestRequiredPermissions(Action<bool> onRequestComplete)
+        //         {
+        //             if (!s_instance)
+        //             {
+        //                 Debug.LogError($"[QRCodeManager] {nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
+        //                 return;
+        //             }
 
-// #if UNITY_EDITOR
-//             const string kCantRequestMsg =
-//                 "Cannot request Android permission when using Link or XR Sim. " +
-//                 "For Link, enable the spatial data permission from the Link app under Settings > Beta > Spatial Data over Meta Quest Link. " +
-//                 "For XR Sim, no permission is necessary.";
+        // #if UNITY_EDITOR
+        //             const string kCantRequestMsg =
+        //                 "Cannot request Android permission when using Link or XR Sim. " +
+        //                 "For Link, enable the spatial data permission from the Link app under Settings > Beta > Spatial Data over Meta Quest Link. " +
+        //                 "For XR Sim, no permission is necessary.";
 
-//             Debug.LogWarning(kCantRequestMsg);
+        //             Debug.LogWarning(kCantRequestMsg);
 
-//             onRequestComplete?.Invoke(HasPermissions);
-// #else
-//             Debug.Log($"Requesting {ScenePermission} ... (currently: {HasPermissions})");
+        //             onRequestComplete?.Invoke(HasPermissions);
+        // #else
+        //             Debug.Log($"Requesting {ScenePermission} ... (currently: {HasPermissions})");
 
-//             var callbacks = new UnityEngine.Android.PermissionCallbacks();
-//             callbacks.PermissionGranted += perm => Debug.Log($"{perm} granted");
+        //             var callbacks = new UnityEngine.Android.PermissionCallbacks();
+        //             callbacks.PermissionGranted += perm => Debug.Log($"{perm} granted");
 
-//             var msgDenied = $"{ScenePermission} denied. Please press the 'Request Permission' button again.";
-//             var msgDeniedPermanently = $"{ScenePermission} permanently denied. To enable:\n" +
-//                                        $"    1. Uninstall and reinstall the app, OR\n" +
-//                                        $"    2. Manually grant permission in device Settings > Privacy & Safety > App Permissions.";
+        //             var msgDenied = $"{ScenePermission} denied. Please press the 'Request Permission' button again.";
+        //             var msgDeniedPermanently = $"{ScenePermission} permanently denied. To enable:\n" +
+        //                                        $"    1. Uninstall and reinstall the app, OR\n" +
+        //                                        $"    2. Manually grant permission in device Settings > Privacy & Safety > App Permissions.";
 
-// #if !UNITY_6000_0_OR_NEWER
-//             callbacks.PermissionDenied += _ => Debug.LogError(msgDenied);
-//             callbacks.PermissionDeniedAndDontAskAgain += _ => Debug.LogError(msgDeniedPermanently);
-// #else
-//             callbacks.PermissionDenied += perm =>
-//             {
-//                 // ShouldShowRequestPermissionRationale returns false only if
-//                 // the user selected 'Never ask again' or if the user has never
-//                 // been asked for the permission (which can't be the case here).
-//                 Debug.LogError(
-//                     UnityEngine.Android.Permission.ShouldShowRequestPermissionRationale(perm)
-//                         ? msgDenied
-//                         : msgDeniedPermanently);
-//             };
-// #endif // UNITY_6000_0_OR_NEWER
+        // #if !UNITY_6000_0_OR_NEWER
+        //             callbacks.PermissionDenied += _ => Debug.LogError(msgDenied);
+        //             callbacks.PermissionDeniedAndDontAskAgain += _ => Debug.LogError(msgDeniedPermanently);
+        // #else
+        //             callbacks.PermissionDenied += perm =>
+        //             {
+        //                 // ShouldShowRequestPermissionRationale returns false only if
+        //                 // the user selected 'Never ask again' or if the user has never
+        //                 // been asked for the permission (which can't be the case here).
+        //                 Debug.LogError(
+        //                     UnityEngine.Android.Permission.ShouldShowRequestPermissionRationale(perm)
+        //                         ? msgDenied
+        //                         : msgDeniedPermanently);
+        //             };
+        // #endif // UNITY_6000_0_OR_NEWER
 
-//             if (onRequestComplete is not null)
-//             {
-//                 callbacks.PermissionGranted += _ => onRequestComplete(HasPermissions);
-//                 callbacks.PermissionDenied += _ => onRequestComplete(HasPermissions);
-// #if !UNITY_6000_0_OR_NEWER
-//                 callbacks.PermissionDeniedAndDontAskAgain += _ => onRequestComplete(HasPermissions);
-// #endif // UNITY_6000_0_OR_NEWER
-//             }
+        //             if (onRequestComplete is not null)
+        //             {
+        //                 callbacks.PermissionGranted += _ => onRequestComplete(HasPermissions);
+        //                 callbacks.PermissionDenied += _ => onRequestComplete(HasPermissions);
+        // #if !UNITY_6000_0_OR_NEWER
+        //                 callbacks.PermissionDeniedAndDontAskAgain += _ => onRequestComplete(HasPermissions);
+        // #endif // UNITY_6000_0_OR_NEWER
+        //             }
 
-//             UnityEngine.Android.Permission.RequestUserPermission(ScenePermission, callbacks);
-// #endif // UNITY_EDITOR
-//         }
+        //             UnityEngine.Android.Permission.RequestUserPermission(ScenePermission, callbacks);
+        // #endif // UNITY_EDITOR
+        //         }
     }
 }

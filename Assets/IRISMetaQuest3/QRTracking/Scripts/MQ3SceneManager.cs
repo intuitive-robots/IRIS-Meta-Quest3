@@ -2,26 +2,25 @@ using IRIS.MetaQuest3.QRCodeDetection;
 using IRIS.Node;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using Meta.XR.Samples;
 using Meta.XR.MRUtilityKit;
-using IRIS.SceneLoader; 
-using System.Linq;
+using IRIS.SceneLoader;
 using Newtonsoft.Json;
+using IRIS.Utilities;
 
-public class MQ3SceneManager : MonoBehaviour
+public class MQ3SceneManager : Singleton<MQ3SceneManager>
 {
     [SerializeField] private QRCodeManager qrCodeManager;
 
     private IRISService<string, string> ToggleQRTrackingService;
 
     private Dictionary<string, SceneData> _sceneConfig = new Dictionary<string, SceneData>();
+
+    // Kept as Action because UnityEvent cannot serialize Dictionaries in the Inspector
     public event Action<Dictionary<string, SceneData>> NewSceneConfig;
 
-
     // --- 1. Raw JSON Classes (Internal use only) ---
-    // These match the JSON structure exactly: List of objects, Robotics Coords
     [Serializable]
     public class RawJsonSceneItem
     {
@@ -37,22 +36,73 @@ public class MQ3SceneManager : MonoBehaviour
         public float x;
         public float y;
         public float z;
-        
+
         // Euler angles in Robotics frame
         public float rotX;
         public float rotY;
         public float rotZ;
+
+        /// <summary>
+        /// Converts this RawOffset (Robotics Coords) to a SceneData object (Unity Coords).
+        /// </summary>
+        public SceneData ToSceneData(string name, string qrCode)
+        {
+            // Position Mapping:
+            // Robotics X (Fwd) -> Unity Z (Fwd)
+            // Robotics Z (Up)  -> Unity Y (Up)
+            // Robotics Y (Side)-> Unity X (Side) (Negated for LH vs RH system)
+            float unityX = -y;
+            float unityY = z;
+            float unityZ = x;
+
+            // Rotation Mapping:
+            // Standard axis swaps for Robotics -> Unity
+            float unityRotX = rotY;    // Pitch maps to X
+            float unityRotY = -rotZ;   // Yaw maps to Y (negated)
+            float unityRotZ = -rotX;   // Roll maps to Z (negated)
+
+            return new SceneData
+            {
+                Name = name, // Added Name
+                QrCode = qrCode,
+                Position = new Vector3(unityX, unityY, unityZ),
+                Rotation = new Vector3(unityRotX, unityRotY, unityRotZ)
+            };
+        }
     }
 
     // --- 2. Runtime Classes (What you want to use) ---
-    // Dictionary Value Structure, Unity Coords
     public class SceneData
     {
+        public string Name { get; set; } // Added Name
         public string QrCode { get; set; }
-        
-        // Using Unity's native types makes life easier
-        public Vector3 Position { get; set; } 
-        public Vector3 Rotation { get; set; } // Or use Quaternion if preferred
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; } // Euler Angles
+
+        /// <summary>
+        /// Converts this SceneData (Unity Coords) back to a RawOffset (Robotics Coords).
+        /// Returns a RawJsonSceneItem wrapper containing the name, qr, and offset.
+        /// </summary>
+        public RawJsonSceneItem ToRawJsonItem()
+        {
+            return new RawJsonSceneItem
+            {
+                name = Name,
+                qrCode = QrCode,
+                offset = new RawOffset
+                {
+                    // Inverse Position Mapping:
+                    x = Position.z,
+                    y = -Position.x,
+                    z = Position.y,
+
+                    // Inverse Rotation Mapping:
+                    rotX = -Rotation.z,
+                    rotY = Rotation.x,
+                    rotZ = -Rotation.y
+                }
+            };
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -67,7 +117,6 @@ public class MQ3SceneManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // sync tracked QR codes to corresponding scene objects
         if (qrCodeManager == null || !QRCodeManager.TrackingEnabled)
             return;
 
@@ -84,35 +133,39 @@ public class MQ3SceneManager : MonoBehaviour
         }
     }
 
+    public void UpdateRawOffset(string sceneName, RawOffset offset)
+    {
+        SceneData currentSceneData = _sceneConfig[sceneName];
+        string qrName = (currentSceneData == null) ? "" : currentSceneData.QrCode;
+        SceneData sceneData = offset.ToSceneData(sceneName, qrName);
+        _sceneConfig[sceneName] = sceneData;
+        NewSceneConfig?.Invoke(_sceneConfig);
+    }
+
     private void SetPosAndRot(MRUKTrackable trackable, string sceneName)
     {
         var sceneObj = SimSceneSpawner.Instance.GetSceneObject(sceneName);
-        // Update position & rotation to match the QR code
+        if (sceneObj == null) return;
 
-        // 1. Get the current forward direction
+        // 1. Get current forward
         Vector3 currentForward = trackable.transform.forward;
 
-        // 2. Project this vector onto the horizontal plane (XZ)
-        // This removes the Y component so the vector is "flat"
+        // 2. Project onto horizontal plane
         Vector3 forwardOnPlane = Vector3.ProjectOnPlane(currentForward, Vector3.up);
 
-        // Handle the edge case where the object was looking straight up or down
         if (forwardOnPlane.sqrMagnitude < 0.0001f)
         {
-            // If the projected vector is too small, default to some horizontal direction
-            // as rotation around Y axis won't matter in this case
             Vector3 currentUp = trackable.transform.up;
             forwardOnPlane = Vector3.ProjectOnPlane(currentUp, Vector3.up);
         }
 
-        // 3. Create a new rotation
-        // "Look in the direction of forwardOnPlane, but keep the head up (Vector3.up)"
+        // 3. Create rotation
         Quaternion qua = Quaternion.LookRotation(forwardOnPlane, Vector3.up);
 
         sceneObj.transform.SetPositionAndRotation(trackable.transform.position, qua);
         SceneData sceneData = _sceneConfig[sceneName];
 
-        // Apply offset from config
+        // Apply offset
         sceneObj.transform.position += sceneData.Position;
         sceneObj.transform.rotation *= Quaternion.Euler(sceneData.Rotation);
     }
@@ -141,53 +194,20 @@ public class MQ3SceneManager : MonoBehaviour
 
         try
         {
-            // Step A: Deserialize JSON into the "Raw" List structure
             var rawList = JsonConvert.DeserializeObject<List<RawJsonSceneItem>>(json);
 
             if (rawList == null) return resultDict;
 
-            // Step B: Iterate, Convert Coordinates, and Fill Dictionary
             foreach (var item in rawList)
             {
                 if (string.IsNullOrEmpty(item.name)) continue;
 
-                // --- Coordinate Transformation Logic ---
-                
-                // 1. Position Mapping
-                // User Req: Robotics (Z=Up, X=Fwd) -> Unity (Y=Up, Z=Fwd)
-                // Robotics X (Fwd) -> Unity Z (Fwd)
-                // Robotics Z (Up)  -> Unity Y (Up)
-                // Robotics Y (Side)-> Unity X (Side)
-                
-                // Note: Robotics is usually Right-Handed, Unity is Left-Handed.
-                // To preserve the world shape, we usually negate the Side axis (Unity X).
-                float unityX = -item.offset.y; 
-                float unityY = item.offset.z;
-                float unityZ = item.offset.x;
-                
-                Vector3 finalPos = new Vector3(unityX, unityY, unityZ);
+                // --- Pass Name and QR Code into conversion ---
+                SceneData sceneData = item.offset.ToSceneData(item.name, item.qrCode);
 
-                // 2. Rotation Mapping
-                // Rotations are complex (order matters: Roll/Pitch/Yaw). 
-                // A simple axis swap for Euler often looks like this:
-                float unityRotX = item.offset.rotY; // Pitch usually maps to X rotation in Unity
-                float unityRotY = -item.offset.rotZ; // Yaw maps to Y (negated for handedness)
-                float unityRotZ = -item.offset.rotX; // Roll maps to Z
-                
-                Vector3 finalRot = new Vector3(unityRotX, unityRotY, unityRotZ);
-
-                // Create the runtime object
-                var sceneData = new SceneData
-                {
-                    QrCode = item.qrCode,
-                    Position = finalPos,
-                    Rotation = finalRot
-                };
-
-                // Add to Dictionary (using "name" as the Key)
                 resultDict[item.name] = sceneData;
-                Debug.Log($"[MQ3SceneManager] Parsed Scene: {item.name}, QR: {item.qrCode}, Pos: {finalPos}, Rot: {finalRot}");
-                Debug.Log($"[MQ3SceneManager] Parsed Scene: {item.name}, exists: {SimSceneSpawner.Instance.GetSceneObject(item.name) != null}");
+
+                Debug.Log($"[MQ3SceneManager] Parsed: {sceneData.Name}, QR: {sceneData.QrCode}");
             }
         }
         catch (System.Exception ex)
