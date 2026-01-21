@@ -5,12 +5,12 @@ using UnityEngine.Events;
 using IRIS.Node;
 using NUnit.Framework.Internal;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 public class MQ3MenuManager : Singleton<MQ3MenuManager>
 {
     [SerializeField] private TMP_Text debugText;
     [SerializeField] private TMP_InputField appNameInput;
-    [SerializeField] private GameObject nameChangePopup;
     [SerializeField] OffsetConfigMenuManager offsetConfigMenuManagerPrefab;
     [SerializeField] GameObject OffsetConfigMenuManagerParent;
     public UnityEvent onQRTrackingStarted;
@@ -20,7 +20,7 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
     public UnityEvent<string> onChangeName;
 
     private Dictionary<string, OffsetConfigMenuManager> offsetConfigMenuManagers = new Dictionary<string, OffsetConfigMenuManager>();
-
+    private ConcurrentQueue<Dictionary<string, MQ3SceneManager.SceneData>> _pendingConfigs = new ConcurrentQueue<Dictionary<string, MQ3SceneManager.SceneData>>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,26 +31,17 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
         onAlignmentStopped.AddListener(() => debugText.text = "Alignment Stopped");
         updateDisplayName();
 
-        MQ3SceneManager.Instance.NewSceneConfig += OnNewSceneConfig;
+        MQ3SceneManager.Instance.NewSceneConfig += (dictionary) => _pendingConfigs.Enqueue(dictionary);
     }
 
-    private void OnNewSceneConfig(Dictionary<string, MQ3SceneManager.SceneData> dictionary)
-    {
-        foreach (var kv in dictionary)
-        {
-            string sceneName = kv.Key;
-            if (!offsetConfigMenuManagers.ContainsKey(sceneName))
-            {
-                var instance = Instantiate(offsetConfigMenuManagerPrefab, OffsetConfigMenuManagerParent.transform);
-                instance.GetComponent<OffsetConfigMenuManager>().Initialize(sceneName, kv.Value.QrCode, kv.Value.ToRawJsonItem().offset);
-                offsetConfigMenuManagers[sceneName] = instance.GetComponent<OffsetConfigMenuManager>();
-            }
-        }
-    }
 
     // Update is called once per frame
     void Update()
     {
+        while (_pendingConfigs.TryDequeue(out var dictionary))
+        {
+            OnNewSceneConfig(dictionary);
+        }
     }
 
     public void QRTrackingToggled(bool isTracking)
@@ -62,6 +53,19 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
         else
         {
             onQRTrackingStopped?.Invoke();
+        }
+    }
+    private void OnNewSceneConfig(Dictionary<string, MQ3SceneManager.SceneData> dictionary)
+    {
+        foreach (var kv in dictionary)
+        {
+            string sceneName = kv.Key;
+            if (!offsetConfigMenuManagers.ContainsKey(sceneName))
+            {
+                var instance = Instantiate(offsetConfigMenuManagerPrefab, OffsetConfigMenuManagerParent.transform);
+                instance.GetComponent<OffsetConfigMenuManager>().Initialize(sceneName, kv.Value.QrCode, kv.Value.ToRawJsonItem().offset);
+                offsetConfigMenuManagers[sceneName] = instance.GetComponent<OffsetConfigMenuManager>();
+            }
         }
     }
 

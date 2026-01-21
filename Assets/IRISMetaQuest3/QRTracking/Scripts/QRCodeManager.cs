@@ -137,6 +137,7 @@ namespace IRIS.MetaQuest3.QRCodeDetection
 
         public string ToggleQRTracking(string message)
         {
+            Debug.Log($"[QRCodeManager] ToggleQRTracking called with message: {message}");
             TrackingEnabled = !TrackingEnabled;
             Debug.Log($"[QRCodeManager] QR Tracking enabled: {TrackingEnabled}");
             return $"QR Tracking enabled: {TrackingEnabled}";
