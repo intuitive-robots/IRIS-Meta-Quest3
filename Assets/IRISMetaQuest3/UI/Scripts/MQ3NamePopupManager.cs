@@ -37,7 +37,7 @@ namespace IRIS.MetaQuest3.UI
         public void OpenNameChangePopup(string currentName = null)
         {
             isdkSceneMenuManager.blockMenuToggle = true;
-            currentName ??= IRISXRNode.Instance.localInfo.name;
+            currentName ??= IRISXRNode.Instance.localInfo.nodeInfo.Name;
             
             if (nameChangePopup != null)
             {
