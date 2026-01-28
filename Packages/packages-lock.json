@@ -17,11 +17,11 @@
       "hash": "f8e351c79f8562929531a3542ba0d3b3518ea24f"
     },
     "com.meta.xr.mrutilitykit": {
-      "version": "78.0.0",
+      "version": "83.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.core": "78.0.0",
+        "com.meta.xr.sdk.core": "83.0.1",
         "com.unity.textmeshpro": "3.0.6",
         "com.unity.ai.navigation": "1.1.4",
         "com.unity.nuget.newtonsoft-json": "3.0.2"
@@ -29,14 +29,14 @@
       "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.core": {
-      "version": "78.0.0",
+      "version": "83.0.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.interaction": {
-      "version": "78.0.0",
+      "version": "83.0.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -46,12 +46,12 @@
       "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.interaction.ovr": {
-      "version": "78.0.0",
+      "version": "83.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.core": "78.0.0",
-        "com.meta.xr.sdk.interaction": "78.0.0"
+        "com.meta.xr.sdk.core": "83.0.1",
+        "com.meta.xr.sdk.interaction": "83.0.1"
       },
       "url": "https://packages.unity.com"
     },
