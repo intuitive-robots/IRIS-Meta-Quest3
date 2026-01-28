@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using MessagePack;
 using IRIS.Node;
 using IRIS.Utilities;
 using IRIS.SceneLoader;
@@ -7,24 +8,29 @@ using IRIS.SceneLoader;
 namespace IRIS.MetaQuest3.HandTracking
 {
 
-    [SerializeField]
+    [MessagePackObject]
     public class MetaQuest3Bone
     {
+        [Key("pos")]
         public List<float> pos;
+        [Key("rot")]
         public List<float> rot;
     }
 
-    [SerializeField]
+    [MessagePackObject]
     public class MetaQuest3Hand
     {
+        [Key("bones")]
         public List<MetaQuest3Bone> bones;
         // TODO: hand gesture data can be added here
     }
 
-    [SerializeField]
+    [MessagePackObject]
     public class MetaQuest3HandTrackingData
     {
+        [Key("leftHand")]
         public MetaQuest3Hand leftHand;
+        [Key("rightHand")]
         public MetaQuest3Hand rightHand;
     }
 

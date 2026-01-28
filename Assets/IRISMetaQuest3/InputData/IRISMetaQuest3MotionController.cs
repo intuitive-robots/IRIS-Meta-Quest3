@@ -1,32 +1,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using MessagePack;
 using IRIS.Node;
 using IRIS.Utilities;
 
 namespace IRIS.MetaQuest3.MotionController
 {
 
-    [SerializeField]
+    [MessagePackObject]
     public class MetaQuest3MotionControllerHand
     {
+        [Key("pos")]
         public List<float> pos;          // Position [x, y, z]
+        [Key("rot")]
         public List<float> rot;          // Rotation [x, y, z, w]
+        [Key("vel")]
         public List<float> vel;          // Linear velocity [vx, vy, vz]
+        [Key("ang_vel")]
         public List<float> ang_vel;      // Angular velocity [wx, wy, wz]
+        [Key("index_trigger")]
         public bool index_trigger;       // Index trigger (front trigger)
+        [Key("hand_trigger")]
         public bool hand_trigger;        // Hand trigger (grip)
     }
 
 
-     [SerializeField]
+    [MessagePackObject]
     public class MetaQuest3MotionControllerData
     {
+        [Key("left")]
         public MetaQuest3MotionControllerHand left;
+        [Key("right")]
         public MetaQuest3MotionControllerHand right;
+        [Key("A")]
         public bool A;
+        [Key("B")]
         public bool B;
+        [Key("X")]
         public bool X;
+        [Key("Y")]
         public bool Y;
     }
 
@@ -36,13 +49,11 @@ namespace IRIS.MetaQuest3.MotionController
         [SerializeField] private Transform trackingSpace;
         [SerializeField] private Transform rootTrans;
         private Publisher<MetaQuest3MotionControllerData> _MotionControllerPublisher;
-        private IRISService<string, string> toggleMotionControllerService;
         // private bool isMotionControllerEnabled = true;
 
         void Start()
         {
             _MotionControllerPublisher = new Publisher<MetaQuest3MotionControllerData>("MotionController");
-            // toggleMotionControllerService = new IRISService<string, string>("ToggleMotionController", ToggleMotionController);
         }
 
         void Update()

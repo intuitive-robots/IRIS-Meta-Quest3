@@ -6,14 +6,13 @@ using IRIS.Node;
 class IRISMetaQuest3Grabbable : MonoBehaviour
 {
     public bool isGrabbable = false;
-    private IRISService<string, string> ToggleGrabService;
     [SerializeField] private Grabbable grabbable;
     [SerializeField] private GameObject _ISDK_RayGrabInteraction;
 
     private void Start()
     {
         grabbable = GetComponent<Grabbable>();
-        ToggleGrabService = new IRISService<string, string>("ToggleGrab", (message) =>
+        IRISXRNode.Instance.ServiceManager.RegisterServiceCallback<string, string>("ToggleGrab", (message) =>
         {
             if (isGrabbable)
             {
