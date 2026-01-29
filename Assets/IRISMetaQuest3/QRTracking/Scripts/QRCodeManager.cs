@@ -30,7 +30,7 @@ using IRIS.Node;
 namespace IRIS.MetaQuest3.QRCodeDetection
 {
     [MetaCodeSample("MRUKSample-QRCodeDetection")]
-    public class QRCodeManager : MonoBehaviour
+    public class QRCodeManager : Singleton<QRCodeManager>
     {
         //
         // Static interface
