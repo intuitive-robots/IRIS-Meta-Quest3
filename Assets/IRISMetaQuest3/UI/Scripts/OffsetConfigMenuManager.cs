@@ -13,7 +13,7 @@ public class OffsetConfigMenuManager : MonoBehaviour
 
     [SerializeField] private TMP_Text offsetXText, offsetYText, offsetZText;
     [SerializeField] private TMP_Text rotXText, rotYText, rotZText;
-    [SerializeField] private TMP_Text SceneNameText;
+    // [SerializeField] private TMP_Text SceneNameText;
 
     [Header("Settings")]
     [SerializeField] private float posStepSize = 0.001f; // Defined in Meters (e.g. 0.001 = 1mm)
@@ -35,7 +35,7 @@ public class OffsetConfigMenuManager : MonoBehaviour
         RemoveListeners();
     }
 
-    public void Initialize(string name, string qrCode, RawOffset offset)
+    public void Initialize(RawOffset offset)
     {
         Debug.Log($"[OffsetConfigMenuManager] Init: {name}");
 
@@ -43,7 +43,7 @@ public class OffsetConfigMenuManager : MonoBehaviour
         if (this.offset != null && offset == this.offset) return;
 
         this.offset = offset;
-        SceneNameText.text = name;
+        // SceneNameText.text = name;
 
         // Temporarily remove listeners so setting values doesn't trigger network calls during Init
         RemoveListeners();
@@ -80,7 +80,7 @@ public class OffsetConfigMenuManager : MonoBehaviour
         UpdatePositionText(sliderValueMM, textComponent);
 
         // Send Network Update
-        MQ3SceneManager.Instance.UpdateRawOffset(SceneNameText.text, offset);
+        MQ3SceneManager.Instance.UpdateRawOffset(offset);
     }
 
     private void HandleRotationChange(float sliderValueDeg, Action<float> setOffsetAction, TMP_Text textComponent)
@@ -92,7 +92,7 @@ public class OffsetConfigMenuManager : MonoBehaviour
         UpdateRotationText(sliderValueDeg, textComponent);
 
         // Send Network Update
-        MQ3SceneManager.Instance.UpdateRawOffset(SceneNameText.text, offset);
+        MQ3SceneManager.Instance.UpdateRawOffset(offset);
     }
 
     // Helper to format text consistently
@@ -151,13 +151,10 @@ public class OffsetConfigMenuManager : MonoBehaviour
     // 4. MISC
     // ---------------------------------------------------------
 
-    private void OnNewSceneConfig(Dictionary<string, SceneData> dictionary)
+    private void OnNewSceneConfig(SceneData sceneData)
     {
-        if(dictionary.TryGetValue(SceneNameText.text, out SceneData data))
-        {
-            Initialize(SceneNameText.text, data.QrCode, data.ToRawJsonItem().offset);
-        }
+        Initialize(sceneData.ToRawJsonItem().offset);
     }
 
-    public string GetSceneName() => SceneNameText.text;
+    // public string GetSceneName() => SceneNameText.text;
 }

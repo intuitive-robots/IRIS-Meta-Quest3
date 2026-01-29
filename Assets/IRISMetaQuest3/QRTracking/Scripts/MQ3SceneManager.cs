@@ -8,65 +8,83 @@ using Meta.XR.MRUtilityKit;
 using IRIS.SceneLoader;
 using Newtonsoft.Json;
 using IRIS.Utilities;
+using MessagePack;
 
 public class MQ3SceneManager : Singleton<MQ3SceneManager>
 {
     [SerializeField] private QRCodeManager qrCodeManager;
 
-    private Dictionary<string, SceneData> _sceneConfig = new Dictionary<string, SceneData>();
+    // CHANGED: Now holds just a single config object, not a dictionary
+    private SceneData _sceneConfig;
 
-    // NEW: Cache to store the last known stable pose of a QR Code
-    // Key: QR Code Payload (e.g., "IRIS"), Value: World Pose (Position + Rotation)
+    // Cache to store the last known stable pose of a QR Code
+    // Key: QR Code Payload (e.g., "IRIS"), Value: World Pose
     private Dictionary<string, Pose> _cachedQRPoses = new Dictionary<string, Pose>();
 
-    public event Action<Dictionary<string, SceneData>> NewSceneConfig;
+    // CHANGED: Event now passes a single SceneData object
+    public event Action<SceneData> NewSceneConfig;
 
-    // --- 1. Raw JSON Classes (Internal use only) ---
+    // --- 1. Raw JSON Classes ---
+    // [Serializable]
+    // public class RawJsonSceneItem
+    // {
+    //     // REMOVED: public string name; 
+    //     public string qrCode;
+    //     public RawOffset offset;
+    // }
+
+
     [Serializable]
+    [MessagePackObject(keyAsPropertyName: true)] // This forces serialization as a Map {"key": value}
     public class RawJsonSceneItem
     {
-        public string name;
-        public string qrCode;
-        public RawOffset offset;
+        // REMOVED: public string name; 
+
+        // Because keyAsPropertyName is true, this serialize as "qrCode": "value"
+        public string qrCode; 
+
+        // Ensure the RawOffset class ALSO has the [MessagePackObject] attribute!
+        public RawOffset offset; 
     }
 
+    // Don't forget to apply the same logic to the nested class
     [Serializable]
+    [MessagePackObject(keyAsPropertyName: true)] 
     public class RawOffset
     {
-        // Robotics: x=forward, z=up, y=side
         public float x;
         public float y;
         public float z;
+        public float rotX, rotY, rotZ;
 
-        // Euler angles in Robotics frame
-        public float rotX;
-        public float rotY;
-        public float rotZ;
-
-        public SceneData ToSceneData(string name, string qrCode)
+        public SceneData ToSceneData(string qrCode)
         {
-            float unityX = -y;
-            float unityY = z;
-            float unityZ = x;
-
-            float unityRotX = rotY;    
-            float unityRotY = -rotZ;   
-            float unityRotZ = -rotX;   
-
+            // Coordinate conversion (Robotics -> Unity)
             return new SceneData
             {
-                Name = name,
                 QrCode = qrCode,
-                Position = new Vector3(unityX, unityY, unityZ),
-                Rotation = new Vector3(unityRotX, unityRotY, unityRotZ)
+                Position = new Vector3(-y, z, x),
+                Rotation = new Vector3(rotY, -rotZ, -rotX)
             };
         }
+        // ... add your actual fields here
     }
+
+
+    // [Serializable]
+    // public class RawOffset
+    // {
+    //     // Robotics: x=forward, z=up, y=side
+    //     public float x, y, z;
+    //     public float rotX, rotY, rotZ;
+
+    //     // CHANGED: Removed 'name' parameter
+    // }
 
     // --- 2. Runtime Classes ---
     public class SceneData
     {
-        public string Name { get; set; }
+        // REMOVED: public string Name { get; set; }
         public string QrCode { get; set; }
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; } 
@@ -75,10 +93,10 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
         {
             return new RawJsonSceneItem
             {
-                name = Name,
                 qrCode = QrCode,
                 offset = new RawOffset
                 {
+                    // Inverse Coordinate conversion (Unity -> Robotics)
                     x = Position.z,
                     y = -Position.x,
                     z = Position.y,
@@ -98,7 +116,7 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
 
     void Update()
     {
-        if (qrCodeManager == null) return;
+        if (qrCodeManager == null || _sceneConfig == null) return;
 
         bool isTracking = QRCodeManager.TrackingEnabled;
 
@@ -114,97 +132,70 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
 
     private void UseLivePose()
     {
-        // --- CASE 1: LIVE TRACKING ---
-        // Update scenes AND update the cache
+        // Get all currently visible QRs
         Dictionary<string, MRUKTrackable> tracked = qrCodeManager.GetTrackedQRCodes();
 
-        foreach (var kv in tracked)
+        // We only care about the QR code specified in our single _sceneConfig
+        if (tracked.TryGetValue(_sceneConfig.QrCode, out MRUKTrackable trackable))
         {
-            string qrName = kv.Key;
-            MRUKTrackable trackable = kv.Value;
-
-            // 1. Calculate the stable pose (projected on floor)
+            // 1. Calculate stable pose
             Pose stablePose = CalculateStablePose(trackable.transform);
 
             // 2. Save to Cache
-            _cachedQRPoses[qrName] = stablePose;
+            _cachedQRPoses[_sceneConfig.QrCode] = stablePose;
 
-            // 3. Update Scene
-            string sceneName = getSceneNameFromQrName(qrName);
-            if (sceneName != null)
-            {
-                ApplyScenePose(sceneName, stablePose);
-            }
+            // 3. Apply to Scene
+            ApplyScenePose(stablePose);
         }
     }
 
     private void UseCachedPose()
     {
-        // --- CASE 2: CACHED TRACKING ---
-        // Use stored poses to allow offset adjustments without looking at QR code
-        foreach (var kv in _sceneConfig)
+        // If we aren't tracking, look for the data in our cache
+        if (_cachedQRPoses.TryGetValue(_sceneConfig.QrCode, out Pose cachedPose))
         {
-            string sceneName = kv.Key;
-            string qrName = kv.Value.QrCode;
-
-            if (_cachedQRPoses.TryGetValue(qrName, out Pose cachedPose))
-            {
-                ApplyScenePose(sceneName, cachedPose);
-            }
+            ApplyScenePose(cachedPose);
         }
     }
 
-    /// <summary>
-    /// Calculates a stable pose from a raw transform (projects forward vector to horizontal plane).
-    /// </summary>
     private Pose CalculateStablePose(Transform t)
     {
-        // 1. Get current forward
         Vector3 currentForward = t.forward;
-
-        // 2. Project onto horizontal plane
         Vector3 forwardOnPlane = Vector3.ProjectOnPlane(currentForward, Vector3.up);
 
         if (forwardOnPlane.sqrMagnitude < 0.0001f)
         {
-            Vector3 currentUp = t.up;
-            forwardOnPlane = Vector3.ProjectOnPlane(currentUp, Vector3.up);
+            forwardOnPlane = Vector3.ProjectOnPlane(t.up, Vector3.up);
         }
 
-        // 3. Create rotation
         Quaternion rotation = Quaternion.LookRotation(forwardOnPlane, Vector3.up);
-
         return new Pose(t.position, rotation);
     }
 
-    /// <summary>
-    /// Moves the Scene Object to the QR Pose + Configured Offset.
-    /// </summary>
-    private void ApplyScenePose(string sceneName, Pose qrPose)
+    private void ApplyScenePose(Pose qrPose)
     {
-        var sceneObj = SimSceneSpawner.Instance.GetSceneObject(sceneName);
+        // CHANGED: Use IRISXRNode.Instance.gameObject instead of SimSceneSpawner lookup
+        GameObject sceneObj = IRISXRNode.Instance.gameObject;
+        
         if (sceneObj == null) return;
-
-        SceneData sceneData = _sceneConfig[sceneName];
 
         // 1. Set base position to QR code
         sceneObj.transform.SetPositionAndRotation(qrPose.position, qrPose.rotation);
 
         // 2. Add Offsets (Local to the QR's orientation)
-        sceneObj.transform.position += sceneData.Position;
-        sceneObj.transform.rotation *= Quaternion.Euler(sceneData.Rotation);
+        sceneObj.transform.position += _sceneConfig.Position;
+        sceneObj.transform.rotation *= Quaternion.Euler(_sceneConfig.Rotation);
     }
 
-    public void UpdateRawOffset(string sceneName, RawOffset offset)
+    public void UpdateRawOffset(RawOffset offset)
     {
-        // Debug logs kept from your snippet
-        Debug.Log($"[MQ3SceneManager] Updating RawOffset for scene: {sceneName}...");
+        if (_sceneConfig == null) return;
+
+        Debug.Log($"[MQ3SceneManager] Updating RawOffset...");
         
-        SceneData currentSceneData = _sceneConfig[sceneName];
-        string qrName = (currentSceneData == null) ? "" : currentSceneData.QrCode;
-        SceneData sceneData = offset.ToSceneData(sceneName, qrName);
+        // Re-create SceneData with new offset, preserving the QR code
+        _sceneConfig = offset.ToSceneData(_sceneConfig.QrCode);
         
-        _sceneConfig[sceneName] = sceneData;
         NewSceneConfig?.Invoke(_sceneConfig);
     }
 
@@ -221,41 +212,28 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
         return "No QRCodeManager available";
     }
 
-    public Dictionary<string, SceneData> ParseAndConvert(string json)
+    public SceneData ParseAndConvert(string json)
     {
         Debug.Log($"[MQ3SceneManager] Parsing Scene Config JSON: {json}");
-        var resultDict = new Dictionary<string, SceneData>();
 
-        if (string.IsNullOrWhiteSpace(json)) return resultDict;
+        if (string.IsNullOrWhiteSpace(json)) return null;
 
         try
         {
-            var rawList = JsonConvert.DeserializeObject<List<RawJsonSceneItem>>(json);
-            if (rawList == null) return resultDict;
+            // CHANGED: Deserialize a SINGLE object, not a List
+            var rawItem = JsonConvert.DeserializeObject<RawJsonSceneItem>(json);
 
-            foreach (var item in rawList)
-            {
-                if (string.IsNullOrEmpty(item.name)) continue;
-                SceneData sceneData = item.offset.ToSceneData(item.name, item.qrCode);
-                resultDict[item.name] = sceneData;
-                Debug.Log($"[MQ3SceneManager] Parsed: {sceneData.Name}, QR: {sceneData.QrCode}");
-            }
+            if (rawItem == null) return null;
+
+            SceneData sceneData = rawItem.offset.ToSceneData(rawItem.qrCode);
+            Debug.Log($"[MQ3SceneManager] Parsed Config for QR: {sceneData.QrCode}");
+            
+            return sceneData;
         }
         catch (System.Exception ex)
         {
             Debug.LogError($"[MQ3SceneManager] JSON Parsing failed: {ex.Message}");
+            return null;
         }
-
-        return resultDict;
-    }
-
-    private string getSceneNameFromQrName(string qrName)
-    {
-        foreach (var kv in _sceneConfig)
-        {
-            if (kv.Value.QrCode == qrName)
-                return kv.Key;
-        }
-        return null;
     }
 }
