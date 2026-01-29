@@ -40,7 +40,6 @@ namespace IRIS.MetaQuest3.HandTracking
         [SerializeField] private OVRSkeleton rightHand;
         [SerializeField] private SimSceneSpawner sceneSpawner;
         private Publisher<MetaQuest3HandTrackingData> _handTrackingPublisher;
-        // private IRISService<string, string> toggleHandTrackingService;
         private Transform localTF;
         // private bool isHandTrackingEnabled = true;
         void Start()

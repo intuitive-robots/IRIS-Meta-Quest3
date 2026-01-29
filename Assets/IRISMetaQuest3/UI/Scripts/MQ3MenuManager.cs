@@ -29,7 +29,7 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
         onQRTrackingStopped.AddListener(() => debugText.text = "QR Tracking Stopped");
         onAlignmentStarted.AddListener(() => debugText.text = "Alignment Started");
         onAlignmentStopped.AddListener(() => debugText.text = "Alignment Stopped");
-        updateDisplayName();
+        UpdateDisplayName();
 
         MQ3SceneManager.Instance.NewSceneConfig += (dictionary) => _pendingConfigs.Enqueue(dictionary);
     }
@@ -81,10 +81,10 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
         }
     }
 
-    private void updateDisplayName()
+    private void UpdateDisplayName()
     {
-        debugText.text = "updateDisplayName called. ";
-        name = IRISXRNode.Instance.localInfo.name;
+        debugText.text = "UpdateDisplayName called. ";
+        name = IRISXRNode.Instance.localInfo.nodeInfo.Name;
         if (appNameInput != null)
         {
             debugText.text = "App Name: " + name;

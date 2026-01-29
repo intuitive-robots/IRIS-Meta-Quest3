@@ -13,8 +13,6 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
 {
     [SerializeField] private QRCodeManager qrCodeManager;
 
-    private IRISService<string, string> ToggleQRTrackingService;
-
     private Dictionary<string, SceneData> _sceneConfig = new Dictionary<string, SceneData>();
 
     // NEW: Cache to store the last known stable pose of a QR Code
@@ -94,10 +92,8 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
 
     void Start()
     {
-        ToggleQRTrackingService = new IRISService<string, string>("ToggleQRTracking", (message) =>
-        {
-            return ToggleQRTracking(message);
-        });
+        IRISXRNode.Instance.ServiceManager.RegisterServiceCallback<string, string>("ToggleQRTracking", ToggleQRTracking, true);
+        qrCodeManager = QRCodeManager.Instance;
     }
 
     void Update()
@@ -114,8 +110,6 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
         {
             UseCachedPose();
         }
-
-        
     }
 
     private void UseLivePose()
