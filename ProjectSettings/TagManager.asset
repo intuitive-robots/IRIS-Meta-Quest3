@@ -48,12 +48,12 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - OVROverlayCanvas Rendering
+  - OVROverlayCanvas Rendering
+  - OVROverlayCanvas Rendering
+  - OVROverlayCanvas Rendering
+  - OVROverlayCanvas Rendering
+  - OVROverlayCanvas Rendering
   - OVROverlayCanvas Rendering
   m_SortingLayers:
   - name: Default

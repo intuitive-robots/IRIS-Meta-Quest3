@@ -11,6 +11,7 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
 {
     [SerializeField] private TMP_Text debugText;
     [SerializeField] private TMP_InputField appNameInput;
+    [SerializeField] private MQ3QRAlignmentManager qrAlignmentManager;
     // [SerializeField] OffsetConfigMenuManager offsetConfigMenuManagerPrefab;
     // [SerializeField] GameObject OffsetConfigMenuManagerParent;
     public UnityEvent onQRTrackingStarted;
@@ -20,18 +21,18 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
     public UnityEvent<string> onChangeName;
 
     // private Dictionary<string, OffsetConfigMenuManager> offsetConfigMenuManagers = new Dictionary<string, OffsetConfigMenuManager>();
-    // private ConcurrentQueue<Dictionary<string, MQ3SceneManager.SceneData>> _pendingConfigs = new ConcurrentQueue<Dictionary<string, MQ3SceneManager.SceneData>>();
+    // private ConcurrentQueue<Dictionary<string, MQ3QRAlignmentManager.SceneData>> _pendingConfigs = new ConcurrentQueue<Dictionary<string, MQ3QRAlignmentManager.SceneData>>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         onQRTrackingStarted.AddListener(() => debugText.text = "QR Tracking Started");
+        onQRTrackingStarted.AddListener(() => qrAlignmentManager.StartQRAlignment());
         onQRTrackingStopped.AddListener(() => debugText.text = "QR Tracking Stopped");
+        onQRTrackingStopped.AddListener(() => qrAlignmentManager.StopQRAlignment());
         onAlignmentStarted.AddListener(() => debugText.text = "Alignment Started");
         onAlignmentStopped.AddListener(() => debugText.text = "Alignment Stopped");
         UpdateDisplayName();
-
-        // MQ3SceneManager.Instance.NewSceneConfig += (dictionary) => _pendingConfigs.Enqueue(dictionary);
     }
 
 
@@ -55,7 +56,7 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
             onQRTrackingStopped?.Invoke();
         }
     }
-    // private void OnNewSceneConfig(Dictionary<string, MQ3SceneManager.SceneData> dictionary)
+    // private void OnNewSceneConfig(Dictionary<string, MQ3QRAlignmentManager.SceneData> dictionary)
     // {
     //     foreach (var kv in dictionary)
     //     {

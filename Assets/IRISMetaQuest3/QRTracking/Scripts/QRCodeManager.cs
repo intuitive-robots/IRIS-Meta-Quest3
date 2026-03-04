@@ -120,7 +120,7 @@ namespace IRIS.MetaQuest3.QRCodeDetection
             Destroy(trackable.gameObject);
         }
 
-        public static bool TrackingEnabled
+        public bool TrackingEnabled
         {
             get => s_instance && s_instance._mrukInstance && s_instance._mrukInstance.SceneSettings.TrackerConfiguration.QRCodeTrackingEnabled;
             set
@@ -133,14 +133,6 @@ namespace IRIS.MetaQuest3.QRCodeDetection
                 config.QRCodeTrackingEnabled = value;
                 s_instance._mrukInstance.SceneSettings.TrackerConfiguration = config;
             }
-        }
-
-        public string ToggleQRTracking(string message)
-        {
-            Debug.Log($"[QRCodeManager] ToggleQRTracking called with message: {message}");
-            TrackingEnabled = !TrackingEnabled;
-            Debug.Log($"[QRCodeManager] QR Tracking enabled: {TrackingEnabled}");
-            return $"QR Tracking enabled: {TrackingEnabled}";
         }
 
         internal Dictionary<string, MRUKTrackable> GetTrackedQRCodes()

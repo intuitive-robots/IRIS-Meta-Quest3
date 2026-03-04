@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static MQ3SceneManager;
+using static MQ3QRAlignmentManager;
+using IRIS.Node;
 
 public class OffsetConfigMenuManager : MonoBehaviour
 {
+
+    [Header("References")]
+    [Tooltip("Reference to the MQ3QRAlignmentManager in the scene")]
+    [SerializeField] private IRISOrigin irisOrigin;
+
     [Header("UI Components")]
     [SerializeField] Slider offsetX, offsetY, offsetZ;
     [SerializeField] Slider rotX, rotY, rotZ;
@@ -19,23 +25,30 @@ public class OffsetConfigMenuManager : MonoBehaviour
     [SerializeField] private float posStepSize = 0.001f; // Defined in Meters (e.g. 0.001 = 1mm)
     [SerializeField] private float rotStepSize = 1f;    // Defined in Degrees
 
-    private RawOffset offset;
+    private SceneOffset offset;
     private bool listenersRegistered = false;
 
     void Start()
     {
-        MQ3SceneManager.Instance.NewSceneConfig += OnNewSceneConfig;
+        if (irisOrigin == null)
+        {
+            Debug.LogError("[OffsetConfigMenuManager] IrisOrigin reference is missing!");
+            return;
+        }
+        irisOrigin.OnOffsetApplied += Initialize;
+        AddListeners();
     }
 
     private void OnDestroy()
     {
-        if (MQ3SceneManager.Instance != null)
-            MQ3SceneManager.Instance.NewSceneConfig -= OnNewSceneConfig;
-
+        if (irisOrigin != null)
+        {
+            irisOrigin.OnOffsetApplied -= Initialize;
+        }
         RemoveListeners();
     }
 
-    public void Initialize(RawOffset offset)
+    public void Initialize(SceneOffset offset)
     {
         Debug.Log($"[OffsetConfigMenuManager] Init: {name}");
 
@@ -43,10 +56,6 @@ public class OffsetConfigMenuManager : MonoBehaviour
         if (this.offset != null && offset == this.offset) return;
 
         this.offset = offset;
-        // SceneNameText.text = name;
-
-        // Temporarily remove listeners so setting values doesn't trigger network calls during Init
-        RemoveListeners();
 
         // Initialize Sliders (Position: Meters -> mm, Rotation: Degrees -> Degrees)
         offsetX.value = offset.x * 1000f;
@@ -63,8 +72,6 @@ public class OffsetConfigMenuManager : MonoBehaviour
         UpdateRotationText(rotX.value, rotXText);
         UpdateRotationText(rotY.value, rotYText);
         UpdateRotationText(rotZ.value, rotZText);
-
-        AddListeners();
     }
 
     // ---------------------------------------------------------
@@ -75,12 +82,13 @@ public class OffsetConfigMenuManager : MonoBehaviour
     {
         // Convert Slider (mm) to Data (meters)
         setOffsetAction(sliderValueMM / 1000f);
-        
+
         // Update UI Text
         UpdatePositionText(sliderValueMM, textComponent);
 
         // Send Network Update
-        MQ3SceneManager.Instance.UpdateRawOffset(offset);
+        irisOrigin.ApplyAlignmentOffset(offset);
+
     }
 
     private void HandleRotationChange(float sliderValueDeg, Action<float> setOffsetAction, TMP_Text textComponent)
@@ -92,7 +100,7 @@ public class OffsetConfigMenuManager : MonoBehaviour
         UpdateRotationText(sliderValueDeg, textComponent);
 
         // Send Network Update
-        MQ3SceneManager.Instance.UpdateRawOffset(offset);
+        irisOrigin.ApplyAlignmentOffset(offset);
     }
 
     // Helper to format text consistently
@@ -135,10 +143,10 @@ public class OffsetConfigMenuManager : MonoBehaviour
     // ---------------------------------------------------------
     // 3. STEP FUNCTIONS (Triggered by Buttons)
     // ---------------------------------------------------------
-    
+
     // We only update the slider. The slider listener (defined above) 
     // handles the text updates, data updates, and network calls automatically.
-    
+
     public void StepOffsetX(int step) => offsetX.value += step * (posStepSize * 1000f);
     public void StepOffsetY(int step) => offsetY.value += step * (posStepSize * 1000f);
     public void StepOffsetZ(int step) => offsetZ.value += step * (posStepSize * 1000f);
@@ -147,14 +155,4 @@ public class OffsetConfigMenuManager : MonoBehaviour
     public void StepRotY(int step) => rotY.value += step * rotStepSize;
     public void StepRotZ(int step) => rotZ.value += step * rotStepSize;
 
-    // ---------------------------------------------------------
-    // 4. MISC
-    // ---------------------------------------------------------
-
-    private void OnNewSceneConfig(SceneData sceneData)
-    {
-        Initialize(sceneData.ToRawJsonItem().offset);
-    }
-
-    // public string GetSceneName() => SceneNameText.text;
 }

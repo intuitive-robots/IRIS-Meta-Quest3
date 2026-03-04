@@ -3359,13 +3359,13 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
 --- !u!114 &566441042 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3203194774513815821, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7885336107030963089, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
   m_PrefabInstance: {fileID: 566441041}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566441043}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b181f1d35a19aae19ac9cd78e5c69be2, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f73ea81868a905d5ab20e82028c633c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &566441043 stripped
@@ -4142,7 +4142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 1572018828}
   rightHand: {fileID: 1044175235}
-  sceneSpawner: {fileID: 566441042}
+  sceneSpawner: {fileID: 0}
 --- !u!4 &732901845
 Transform:
   m_ObjectHideFlags: 0
@@ -10940,6 +10940,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   qrCodeManager: {fileID: 1943618006}
+  qrText: IRIS
 --- !u!1 &1953769646
 GameObject:
   m_ObjectHideFlags: 0
@@ -14484,6 +14485,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1844092352321774743, guid: 0b18418029cc08c4db9d3b9df5d7f8c9, type: 3}
+      propertyPath: irisOrigin
+      value: 
+      objectReference: {fileID: 566441042}
     - target: {fileID: 1852880736591729461, guid: 0b18418029cc08c4db9d3b9df5d7f8c9, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -18552,6 +18557,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1844092352321774743, guid: 0b18418029cc08c4db9d3b9df5d7f8c9, type: 3}
+      propertyPath: irisOrigin
+      value: 
+      objectReference: {fileID: 566441042}
     - target: {fileID: 1844092352321774743, guid: 0b18418029cc08c4db9d3b9df5d7f8c9, type: 3}
       propertyPath: SceneNameText
       value: 
@@ -24794,6 +24803,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6927908158986187390, guid: 7a045f2ca0d4814428b7fccee1390eb0, type: 3}
+      propertyPath: qrAlignmentManager
+      value: 
+      objectReference: {fileID: 1943618008}
     - target: {fileID: 6927908158986187390, guid: 7a045f2ca0d4814428b7fccee1390eb0, type: 3}
       propertyPath: OffsetConfigMenuManagerParent
       value: 
