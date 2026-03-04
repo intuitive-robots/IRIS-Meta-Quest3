@@ -24,16 +24,6 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
     // CHANGED: Event now passes a single SceneData object
     public event Action<SceneData> NewSceneConfig;
 
-    // --- 1. Raw JSON Classes ---
-    // [Serializable]
-    // public class RawJsonSceneItem
-    // {
-    //     // REMOVED: public string name; 
-    //     public string qrCode;
-    //     public RawOffset offset;
-    // }
-
-
     [Serializable]
     [MessagePackObject(keyAsPropertyName: true)] // This forces serialization as a Map {"key": value}
     public class RawJsonSceneItem
@@ -70,16 +60,6 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
         // ... add your actual fields here
     }
 
-
-    // [Serializable]
-    // public class RawOffset
-    // {
-    //     // Robotics: x=forward, z=up, y=side
-    //     public float x, y, z;
-    //     public float rotX, rotY, rotZ;
-
-    //     // CHANGED: Removed 'name' parameter
-    // }
 
     // --- 2. Runtime Classes ---
     public class SceneData
@@ -201,15 +181,18 @@ public class MQ3SceneManager : Singleton<MQ3SceneManager>
 
     public string ToggleQRTracking(string message)
     {
-        _sceneConfig = ParseAndConvert(message);
-        NewSceneConfig?.Invoke(_sceneConfig);
-
-        if (qrCodeManager != null)
+        return UnityMainThreadDispatcher.Instance.EnqueueAndWait(() =>
         {
-            return qrCodeManager.ToggleQRTracking(message);
-        }
+            _sceneConfig = ParseAndConvert(message);
+            NewSceneConfig?.Invoke(_sceneConfig);
 
-        return "No QRCodeManager available";
+            if (qrCodeManager != null)
+            {
+                return qrCodeManager.ToggleQRTracking(message);
+            }
+
+            return "No QRCodeManager available";
+        });
     }
 
     public SceneData ParseAndConvert(string json)

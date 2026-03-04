@@ -56,11 +56,26 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "IRIS-Meta-Quest3.sln",
+    "dotnet.defaultSolution": "IRIS-Meta-Quest3.slnx",
     "cSpell.words": [
         "binarizer",
         "Grabbable",
         "MRUK",
         "Zxing"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "editor.lineHighlightBackground": "#1073cf2d",
+        "editor.lineHighlightBorder": "#9fced11f",
+        "activityBar.background": "#0E3143",
+        "titleBar.activeBackground": "#13455E",
+        "titleBar.activeForeground": "#F7FBFD",
+        "titleBar.inactiveBackground": "#0E3143",
+        "titleBar.inactiveForeground": "#F7FBFD",
+        "statusBar.background": "#0E3143",
+        "statusBar.foreground": "#F7FBFD",
+        "statusBar.debuggingBackground": "#0E3143",
+        "statusBar.debuggingForeground": "#F7FBFD",
+        "statusBar.noFolderBackground": "#0E3143",
+        "statusBar.noFolderForeground": "#F7FBFD"
+    }
 }
