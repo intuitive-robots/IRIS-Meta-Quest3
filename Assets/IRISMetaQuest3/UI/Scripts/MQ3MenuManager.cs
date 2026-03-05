@@ -12,6 +12,7 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
     [SerializeField] private TMP_Text debugText;
     [SerializeField] private TMP_InputField appNameInput;
     [SerializeField] private MQ3QRAlignmentManager qrAlignmentManager;
+    [SerializeField] private IRISMetaQuest3Grabbable sceneGrabbable;
     // [SerializeField] OffsetConfigMenuManager offsetConfigMenuManagerPrefab;
     // [SerializeField] GameObject OffsetConfigMenuManagerParent;
     public UnityEvent onQRTrackingStarted;
@@ -26,23 +27,31 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (debugText == null)
+        {
+            Debug.LogError("Debug Text is not assigned in the inspector.");
+        }
+        if (appNameInput == null)
+        {
+            Debug.LogError("App Name Input is not assigned in the inspector.");
+        }
+        if (qrAlignmentManager == null)
+        {
+            Debug.LogError("QR Alignment Manager is not assigned in the inspector.");
+        }
+        if (sceneGrabbable == null)
+        {
+            Debug.LogError("Scene Grabbable is not assigned in the inspector.");
+        }
         onQRTrackingStarted.AddListener(() => debugText.text = "QR Tracking Started");
         onQRTrackingStarted.AddListener(() => qrAlignmentManager.StartQRAlignment());
         onQRTrackingStopped.AddListener(() => debugText.text = "QR Tracking Stopped");
         onQRTrackingStopped.AddListener(() => qrAlignmentManager.StopQRAlignment());
         onAlignmentStarted.AddListener(() => debugText.text = "Alignment Started");
+        onAlignmentStarted.AddListener(() => sceneGrabbable.EnableGrab());
         onAlignmentStopped.AddListener(() => debugText.text = "Alignment Stopped");
+        onAlignmentStopped.AddListener(() => sceneGrabbable.DisableGrab());
         UpdateDisplayName();
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        // while (_pendingConfigs.TryDequeue(out var dictionary))
-        // {
-        //     OnNewSceneConfig(dictionary);
-        // }
     }
 
     public void QRTrackingToggled(bool isTracking)
@@ -56,19 +65,6 @@ public class MQ3MenuManager : Singleton<MQ3MenuManager>
             onQRTrackingStopped?.Invoke();
         }
     }
-    // private void OnNewSceneConfig(Dictionary<string, MQ3QRAlignmentManager.SceneData> dictionary)
-    // {
-    //     foreach (var kv in dictionary)
-    //     {
-    //         string sceneName = kv.Key;
-    //         if (!offsetConfigMenuManagers.ContainsKey(sceneName))
-    //         {
-    //             var instance = Instantiate(offsetConfigMenuManagerPrefab, OffsetConfigMenuManagerParent.transform);
-    //             instance.GetComponent<OffsetConfigMenuManager>().Initialize(sceneName, kv.Value.QrCode, kv.Value.ToRawJsonItem().offset);
-    //             offsetConfigMenuManagers[sceneName] = instance.GetComponent<OffsetConfigMenuManager>();
-    //         }
-    //     }
-    // }
 
     public void AlignmentToggled(bool isAligning)
     {

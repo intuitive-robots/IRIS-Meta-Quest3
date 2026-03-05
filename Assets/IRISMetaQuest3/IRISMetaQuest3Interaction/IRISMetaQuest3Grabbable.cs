@@ -12,22 +12,20 @@ class IRISMetaQuest3Grabbable : MonoBehaviour
     private void Start()
     {
         grabbable = GetComponent<Grabbable>();
-        IRISXRNode.Instance.ServiceManager.RegisterServiceCallback<string, string>("ToggleGrab", (message) =>
-        {
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-            {
-            if (isGrabbable)
-            {
-                DisableGrab();
-            }
-            else
-            {
-                EnableGrab();
-            }
-            });
-            return "Grab state toggled";
-        });
     }
+
+    public void ToggleGrab()
+    {
+        if (isGrabbable)
+        {
+            DisableGrab();
+        }
+        else
+        {
+            EnableGrab();
+        }
+    }
+
 
     public void EnableGrab()
     {
