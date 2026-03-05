@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using MessagePack;
 using IRIS.Node;
 using IRIS.Utilities;
 
@@ -8,10 +9,12 @@ using IRIS.Utilities;
 namespace IRIS.MetaQuest3.MotionController
 {
 
-    [Serializable]
+    [MessagePackObject]
     public class MetaQuest3HeadData
     {
+        [Key("pos")]
         public List<float> pos;      // [x, y, z]
+        [Key("rot")]
         public List<float> rot;      // [x, y, z, w]
     }
 

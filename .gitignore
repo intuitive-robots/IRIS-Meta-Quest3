@@ -105,3 +105,20 @@ InitTestScene*.unity*
 /**/[Oo]bj.meta
 /**/[Bb]in/
 /**/[Bb]in.meta
+
+# Auto-generated files by building
+/[Aa]ssets/[Rr]esources/PerformanceTestRunInfo.json
+/[Aa]ssets/[Rr]esources/PerformanceTestRunInfo.json.meta
+/[Aa]ssets/[Rr]esources/PerformanceTestRunSettings.json
+/[Aa]ssets/[Rr]esources/PerformanceTestRunSettings.json.meta
+
+# Sample Assets by Unity    
+/[Aa]ssets/SampleScenes/
+/[Aa]ssets/Samples/
+/[Aa]ssets/Samples.meta
+
+# Sample Scene files
+Assets/Scenes/UISet.unity
+Assets/Scenes/UISet.unity.meta
+Assets/Scenes/UISetPatterns.unity
+Assets/Scenes/UISetPatterns.unity.meta
