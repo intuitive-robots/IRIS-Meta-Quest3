@@ -30,7 +30,6 @@ class IRISMetaQuest3Grabbable : MonoBehaviour
     public void EnableGrab()
     {
         isGrabbable = true;
-        // Additional logic for when the object is grabbable
         grabbable.enabled = true;
         if (_ISDK_RayGrabInteraction != null)
         {

@@ -62,7 +62,7 @@ public class MQ3QRAlignmentManager : Singleton<MQ3QRAlignmentManager>
         {
             // 1. Calculate stable pose
             // Pose stablePose = CalculateStablePose(trackable.transform);
-            Pose stablePose = new Pose(trackable.transform.position, trackable.transform.rotation);
+            Pose stablePose = new Pose(trackable.transform.position, trackable.transform.rotation * Quaternion.Euler(90f, 0f, 0f));
             // 3. Apply to Scene
             ApplyQRPose(stablePose);
         }
