@@ -1,8 +1,11 @@
-
 name: Build Unity Project
 
 on:
   push:
+    branches:
+      - main
+  # This section ensures the build runs for PRs targeting the main branch
+  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -51,4 +54,3 @@ jobs:
         with:
           name: IRIS-Meta-Quest3-Android-Build
           path: Builds/Android/IRIS-Meta-Quest3.apk
-
