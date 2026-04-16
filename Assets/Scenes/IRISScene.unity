@@ -3321,6 +3321,10 @@ PrefabInstance:
       propertyPath: materialResolver
       value: 
       objectReference: {fileID: 11400000, guid: d227515756115c644af86f0816fc658d, type: 2}
+    - target: {fileID: 3604984722517279093, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
+      propertyPath: videoReceiverPrefab
+      value: 
+      objectReference: {fileID: 9016624378543099232, guid: 95c4fb98331b0b247a94178ad204b215, type: 3}
     - target: {fileID: 5416606952447211905, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
       propertyPath: m_Name
       value: IRISNode
@@ -3408,6 +3412,11 @@ MonoBehaviour:
 --- !u!1 &566441043 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5416606952447211905, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
+  m_PrefabInstance: {fileID: 566441041}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &566441044 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3216935648674226917, guid: de2495710546adb4bb1d60e91b7db0d1, type: 3}
   m_PrefabInstance: {fileID: 566441041}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &574806308
@@ -4179,7 +4188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 1572018828}
   rightHand: {fileID: 1044175235}
-  sceneSpawner: {fileID: 0}
+  rootTrans: {fileID: 566441044}
 --- !u!4 &732901845
 Transform:
   m_ObjectHideFlags: 0
@@ -4208,7 +4217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackingSpace: {fileID: 660890514}
-  rootTrans: {fileID: 1943617997}
+  rootTrans: {fileID: 566441044}
 --- !u!114 &732901847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4222,7 +4231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   headAnchor: {fileID: 1870992454}
-  rootTrans: {fileID: 1943617997}
+  rootTrans: {fileID: 566441044}
 --- !u!1 &744187260
 GameObject:
   m_ObjectHideFlags: 0

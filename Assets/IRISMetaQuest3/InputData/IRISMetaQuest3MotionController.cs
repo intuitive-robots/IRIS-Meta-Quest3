@@ -20,9 +20,9 @@ namespace IRIS.MetaQuest3.MotionController
         [Key("ang_vel")]
         public List<float> ang_vel;      // Angular velocity [wx, wy, wz]
         [Key("index_trigger")]
-        public bool index_trigger;       // Index trigger (front trigger)
+        public float index_trigger;       // Index trigger (front trigger)
         [Key("hand_trigger")]
-        public bool hand_trigger;        // Hand trigger (grip)
+        public float hand_trigger;        // Hand trigger (grip)
     }
 
 
@@ -110,13 +110,13 @@ namespace IRIS.MetaQuest3.MotionController
             MetaQuest3MotionControllerData motionControllerInputData = new();
             // left hand
             MetaQuest3MotionControllerHand leftHand = CreateHandData(OVRInput.Controller.LTouch, trackingSpace, rootTrans);
-            leftHand.index_trigger = OVRInput.Get(OVRInput.RawButton.LIndexTrigger);
-            leftHand.hand_trigger = OVRInput.Get(OVRInput.RawButton.LHandTrigger);
+            leftHand.index_trigger = OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger);
+            leftHand.hand_trigger = OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger);
             motionControllerInputData.left = leftHand;
             // right hand
             MetaQuest3MotionControllerHand rightHand = CreateHandData(OVRInput.Controller.RTouch, trackingSpace, rootTrans);
-            rightHand.index_trigger = OVRInput.Get(OVRInput.RawButton.RIndexTrigger);
-            rightHand.hand_trigger = OVRInput.Get(OVRInput.RawButton.RHandTrigger);
+            rightHand.index_trigger = OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger);
+            rightHand.hand_trigger = OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger);
             motionControllerInputData.right = rightHand;
             // other buttons
             motionControllerInputData.A = OVRInput.Get(OVRInput.RawButton.A);
