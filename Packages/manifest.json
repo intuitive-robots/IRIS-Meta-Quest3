@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
-    "com.intuitiverobotslab.iris-viz": "https://github.com/intuitive-robots/IRIS-Viz.git?path=Packages/com.intuitiverobotslab.iris-viz",
+    "com.intuitiverobotslab.iris-viz": "https://github.com/RobotControlStack/IRIS-Viz.git?path=Packages/com.intuitiverobotslab.iris-viz",
     "com.meta.xr.mrutilitykit": "81.0.0",
     "com.meta.xr.sdk.core": "81.0.0",
     "com.meta.xr.sdk.interaction.ovr": "81.0.0",
