@@ -9478,10 +9478,9 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6064859519696199174}
-        m_TargetAssemblyTypeName: Oculus.Interaction.Samples.ISDKSceneMenuManager,
-          Assembly-CSharp
-        m_MethodName: ToggleMenu
+      - m_Target: {fileID: 3298576567073004391}
+        m_TargetAssemblyTypeName: IRIS.SceneLoader.VideoStreamReceiver, IntuitivoRobotsLab.IRIS-Viz.SceneLoader
+        m_MethodName: CloseWindow
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
