@@ -8,13 +8,14 @@
       "hash": "f789083c31250c83082da9b29be0c976152d699b"
     },
     "com.intuitiverobotslab.iris-viz": {
-      "version": "https://github.com/intuitive-robots/IRIS-Viz.git?path=Packages/com.intuitiverobotslab.iris-viz",
+      "version": "https://github.com/RobotControlStack/IRIS-Viz.git?path=Packages/com.intuitiverobotslab.iris-viz",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.2.1"
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.textmeshpro": "3.0.6"
       },
-      "hash": "9e5a1a703d2c6f6366cb370f8c17e8b4593496bd"
+      "hash": "93b4a29f1cfedfe3d6ffcf4cb878aa500da9a93b"
     },
     "com.meta.xr.mrutilitykit": {
       "version": "83.0.1",
